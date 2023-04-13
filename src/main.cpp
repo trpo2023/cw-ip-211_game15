@@ -72,4 +72,9 @@ public:
         }
     }
 
-    
+    ~Grid() {
+        for (int i = 0; i < n_; ++i) {
+            delete[] blocks_[i];
+        }
+        delete[] blocks_;
+    }
