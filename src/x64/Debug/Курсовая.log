@@ -1,0 +1,62 @@
+﻿  main.cpp
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(83,22): warning C4244: =: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(84,22): warning C4244: =: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(106,68): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(106,56): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(110,56): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(110,40): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(117,64): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(117,52): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(123,52): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(123,36): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(142,52): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\User\Documents\Проекты (учеба)\Курсовая\Курсовая\main.cpp(142,36): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+  Курсовая.vcxproj -> C:\Users\User\Documents\Проекты (учеба)\Курсовая\x64\Debug\Курсовая.exe
