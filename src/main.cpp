@@ -7,7 +7,67 @@
 using namespace sf;
 using namespace std;
 
+// Структура для хранения данных о пользователе и его рекорде
+struct Record {
+    string name;
+    double money;
+    string date;
+};
 
+// Структура для хранения таблицы рекордов
+struct RecordsTable {
+    vector<Record> records;
+
+    // Функция для добавления новой записи
+    void addRecord(Record record) {
+        records.push_back(record);
+    }
+
+    // Функция для вывода всей таблицы рекордов на экран
+    void printTable() {
+        for (int i = 0; i < records.size(); i++) {
+            cout << "Name: " << records[i].name << " Money: " << records[i].money << " Date: " << records[i].date << endl;
+        }
+    }
+
+    // Функция для сохранения таблицы рекордов в файл
+    void saveTableToFile(string fileName) {
+        ofstream file;
+        file.open(fileName);
+
+        for (int i = 0; i < records.size(); i++) {
+            file << records[i].name << " " << records[i].money << " " << records[i].date << endl;
+        }
+
+        file.close();
+    }
+
+    // Функция для загрузки таблицы рекордов из файла
+    void loadTableFromFile(string fileName) {
+        ifstream file;
+        file.open(fileName);
+
+        if (file.is_open()) {
+            string line;
+            while (getline(file, line)) {
+                Record record;
+
+                // Разбиваем строку на отдельные значения и сохраняем их в структуру
+                size_t pos = 0;
+                pos = line.find(" ");
+                record.name = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                pos = line.find(" ");
+                record.money = stod(line.substr(0, pos));
+                line.erase(0, pos + 1);
+                record.date = line;
+
+                addRecord(record);
+            }
+            file.close();
+        }
+    }
+};
 
 void menu(RenderWindow& window) {
 
@@ -59,10 +119,39 @@ void menu(RenderWindow& window) {
 		window.display();
 	}
 }
-
 int main() {
+    RecordsTable recordsTable;
 
-	RenderWindow window(VideoMode(1800, 900), "Game15");
-	menu(window);
+    // Пример добавления новой записи
+    Record rec;
+    int cont = 1;
+    while (cont == 1)
+    {
+        cout << "Enter yout Nickname";
+        cin >> rec.name;
+        cout << endl;
+        cout << "Enter yout Score";
+        cin >> rec.money;
+        cout << endl;
+        time_t t = time(NULL);
+        rec.date = __DATE__;
+        recordsTable.addRecord(rec);
+        cout << "continue? (1/0)";
+        cin >> cont;
+    }
 
+    // Вывод всей таблицы рекордов на экран
+    recordsTable.printTable();
+
+    // Сохранение таблицы рекордов в файл
+    recordsTable.saveTableToFile("records.txt");
+
+    // Загрузка таблицы рекордов из файла
+    RecordsTable loadedRecordsTable;
+    loadedRecordsTable.loadTableFromFile("records.txt");
+
+    // Вывод загруженной таблицы на экран
+    loadedRecordsTable.printTable();
+
+    return 0;
 }
