@@ -115,3 +115,13 @@ public:
                     return false;
         return true;
     }
+private:
+    int** rigth_index_blocks_;
+    int** index_blocks_;
+    int n_; // Размер поля
+    int blockSize_; // Размер блока
+    sf::Font font_; // Шрифт текста
+    sf::RectangleShape** blocks_; // Блоки поля
+    sf::Text** texts_; // Текст для отображения номеров блоков
+    sf::Vector2f size_; // Размеры поля
+};
