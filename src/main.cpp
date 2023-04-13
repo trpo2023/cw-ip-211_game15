@@ -107,3 +107,11 @@ public:
         texts_[x1][y1].setString(std::to_string(index_blocks_[x1][y1]));
         texts_[x2][y2].setString(std::to_string(index_blocks_[x2][y2]));
     }
+    // Проверка на победу
+    bool CheckWin() {
+        for (int i = 0; i < n_; i++)
+            for (int j = 0; j < n_; j++)
+                if (rigth_index_blocks_[i][j] != index_blocks_[i][j])
+                    return false;
+        return true;
+    }
