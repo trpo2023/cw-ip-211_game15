@@ -136,3 +136,30 @@ class Game {
         int blocksize_;
         Grid grid_;
 };
+
+int main()
+{
+    int n = 5;
+    int blockSize = 100;
+
+    sf::RenderWindow window(sf::VideoMode(n * blockSize, n * blockSize), "Grid");
+
+    Grid grid(n, blockSize);
+    grid.swapBlocks(0, 0, 1, 1);
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        
+        window.clear(sf::Color::White);
+        
+        grid.Draw(window);
+        if (grid.CheckWin())
+            break;
+        window.display();
+    }
+
+    return 0;
+}
