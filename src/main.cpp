@@ -125,3 +125,14 @@ private:
     sf::Text** texts_; // Текст для отображения номеров блоков
     sf::Vector2f size_; // Размеры поля
 };
+class Game {
+    public:
+        Game(int n, int blockSize) : n_(n), blockSize_(blockSize) {
+            grid_ = (Grid)(grid())
+
+        }
+    private:
+        int n_;
+        int blocksize_;
+        Grid grid_;
+};
