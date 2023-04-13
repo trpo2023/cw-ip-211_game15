@@ -78,3 +78,14 @@ public:
         }
         delete[] blocks_;
     }
+
+    void Draw(sf::RenderWindow& window) {
+        for (int i = 0; i < n_; ++i) {
+            for (int j = 0; j < n_; ++j) {
+                sf::Vector2f pos(i * blockSize_, j * blockSize_);
+                blocks_[i][j].setPosition(pos);
+                window.draw(blocks_[i][j]);
+                window.draw(texts_[i][j]);
+            }
+        }
+    }
