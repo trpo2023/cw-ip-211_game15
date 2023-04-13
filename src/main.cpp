@@ -89,3 +89,21 @@ public:
             }
         }
     }
+
+    sf::Vector2f getSize() const {
+        return size_;
+    }
+    void swapBlocks(int x1, int y1, int x2, int y2)
+    {
+        std::string Text_temp;
+        int index_temp;
+        sf::RectangleShape temp;
+        temp = blocks_[x1][y1];
+        blocks_[x1][y1] = blocks_[x2][y2];
+        blocks_[x2][y2] = temp;
+        index_temp = index_blocks_[x1][y1];
+        index_blocks_[x1][y1] = index_blocks_[x2][y2];
+        index_blocks_[x2][y2] = index_temp;
+        texts_[x1][y1].setString(std::to_string(index_blocks_[x1][y1]));
+        texts_[x2][y2].setString(std::to_string(index_blocks_[x2][y2]));
+    }
