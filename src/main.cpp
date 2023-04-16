@@ -8,48 +8,58 @@ using namespace sf;
 using namespace std;
 
 // Структура для хранения данных о пользователе и его рекорде
-struct Record {
+struct Record
+{
     string name;
     double money;
     string date;
 };
 
 // Структура для хранения таблицы рекордов
-struct RecordsTable {
+struct RecordsTable
+{
     vector<Record> records;
 
     // Функция для добавления новой записи
-    void addRecord(Record record) {
+    void addRecord(Record record)
+    {
         records.push_back(record);
     }
 
     // Функция для вывода всей таблицы рекордов на экран
-    void printTable() {
-        for (int i = 0; i < records.size(); i++) {
+    void printTable()
+    {
+        for (int i = 0; i < records.size(); i++)
+        {
             cout << "Name: " << records[i].name << " Money: " << records[i].money << " Date: " << records[i].date << endl;
         }
     }
 
     // Функция для сохранения таблицы рекордов в файл
-    void saveTableToFile(string fileName) {
+    void saveTableToFile(string fileName)
+    {
         ofstream file;
         file.open(fileName);
 
-        for (int i = 0; i < records.size(); i++) {
-            file << records[i].name << " " << records[i].money << " " << records[i].date << endl;
+        for (int i = 0; i < records.size(); i++)
+        {
+            file << records[i].name << " " << records[i].date << " " << records[i].money << endl;
         }
 
         file.close();
     }
 
     // Функция для загрузки таблицы рекордов из файла
-    void loadTableFromFile(string fileName) {
+    void loadTableFromFile(string fileName)
+    {
         ifstream file;
-        file.open(fileName);
+        file.open("records.txt");
 
-        if (file.is_open()) {
+        if (file.is_open())
+        {
             string line;
-            while (getline(file, line)) {
+            while (getline(file, line))
+            {
                 Record record;
 
                 // Разбиваем строку на отдельные значения и сохраняем их в структуру
@@ -69,89 +79,144 @@ struct RecordsTable {
     }
 };
 
-void menu(RenderWindow& window) {
-
-	Texture menuTexture1, menuTexture2, menuTexture3, menuTexture4, aboutTexture, menuBackground, escape;
-	menuTexture1.loadFromFile("images/111.png");
-	menuTexture2.loadFromFile("images/444.png");
-	menuTexture3.loadFromFile("images/333.png");
-	menuTexture4.loadFromFile("images/222.png");
-	aboutTexture.loadFromFile("images/about.png");
-	menuBackground.loadFromFile("images/img.png");
-	escape.loadFromFile("images/esc.png");
-	Sprite menu1(menuTexture1), menu2(menuTexture2), menu3(menuTexture3), menu4(menuTexture4), about(aboutTexture), menuBg(menuBackground), esc(escape);
-	bool isMenu = 1;
-	int menuNum = 0;
-	menu1.setPosition(100, 30);
-	menu2.setPosition(100, 90);
-	menu3.setPosition(100, 150);
-	menu4.setPosition(100, 600);
-	about.setPosition(850, 400);
-	menuBg.setPosition(-100, 0);
-	esc.setPosition(50, 850);
-	while (isMenu)
-	{
-		menu1.setColor(Color::White);
-		menu2.setColor(Color::White);
-		menu3.setColor(Color::White);
-		menu4.setColor(Color::White);
-		menuNum = 0;
-		window.clear(Color(129, 181, 221));
-
-		if (IntRect(100, 30, 300, 50).contains(Mouse::getPosition(window))) { menu1.setColor(Color::Blue); menuNum = 1; }
-		if (IntRect(100, 90, 300, 50).contains(Mouse::getPosition(window))) { menu2.setColor(Color::Blue); menuNum = 2; }
-		if (IntRect(100, 150, 300, 50).contains(Mouse::getPosition(window))) { menu3.setColor(Color::Blue); menuNum = 3; }
-		if (IntRect(100, 600, 300, 50).contains(Mouse::getPosition(window))) { menu4.setColor(Color::Blue); menuNum = 4; }
-
-		if (Mouse::isButtonPressed(Mouse::Left))
-		{
-			if (menuNum == 1) isMenu = false;
-			if (menuNum == 2) { window.draw(menuBg); window.display(); window.draw(esc); while (!Keyboard::isKeyPressed(Keyboard::Escape)); ; }
-			if (menuNum == 3) { window.close(); isMenu = false; }
-			if (menuNum == 4) { window.draw(menuBg); window.draw(about); window.draw(esc); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
-
-		}
-		window.draw(menuBg);
-		window.draw(menu1);
-		window.draw(menu2);
-		window.draw(menu3);
-		window.draw(menu4);
-		window.display();
-	}
-}
-int main() {
-    RecordsTable recordsTable;
-
-    // Пример добавления новой записи
-    Record rec;
-    int cont = 1;
-    while (cont == 1)
+void print_record(RenderWindow& window) {
+    // Открываем файл для чтения
+    ifstream file("records.txt");
+    string content;
+    Font font;
+    bool isRec = true;
+    if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
     {
-        cout << "Enter yout Nickname";
-        cin >> rec.name;
-        cout << endl;
-        cout << "Enter yout Score";
-        cin >> rec.money;
-        cout << endl;
-        time_t t = time(NULL);
-        rec.date = __DATE__;
-        recordsTable.addRecord(rec);
-        cout << "continue? (1/0)";
-        cin >> cont;
+        // Обработка ошибки, если шрифт не удалось загрузить
+    }
+    // Если файл запущен успешно
+    if (file.is_open())
+    {
+        // Считываем содержимое файла в строку
+        string line;
+        while (getline(file, line))
+        {
+            content += line + "\n";
+        }
+        file.close();
     }
 
-    // Вывод всей таблицы рекордов на экран
-    recordsTable.printTable();
+    Text text(content, font, 40);
+    text.setPosition(10, 100); // Позиция текста
 
-    // Сохранение таблицы рекордов в файл
-    recordsTable.saveTableToFile("records.txt");
+    // Основной цикл приложения
+    if(isRec)
+    {
+        // Отрисовка текста
+        window.draw(text);
 
-    // Загрузка таблицы рекордов из файла
-    RecordsTable loadedRecordsTable;
-    loadedRecordsTable.loadTableFromFile("records.txt");
+        // Отображение созданного кадра
+        window.display();
+        while (!Keyboard::isKeyPressed(Keyboard::Escape));
+    }
+}
 
-    // Вывод загруженной таблицы на экран
-    loadedRecordsTable.printTable();
+void mainMenu(RenderWindow& window)
+{
+    // Создаем фон для главного меню
+    Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("images/img.png"))
+    {
+        // Обработка ошибки, если текстуру не удалось загрузить
+    }
+    Sprite background(backgroundTexture);
 
-    return 0;
+    // Создаем шрифт для текста на кнопках
+    Font font;
+    if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
+    {
+        // Обработка ошибки, если шрифт не удалось загрузить
+    }
+    background.setPosition(-100, 0);
+
+    // Создаем тексты для кнопок
+    Text button1("New Game", font, 50);
+    button1.setPosition(100, 200); // Установка позиции первой кнопки
+
+    Text button2("Table Records", font, 50);
+    button2.setPosition(100, 300); // Установка позиции второй кнопки
+
+    Text button3("Exit", font, 50);
+    button3.setPosition(100, 400); // Установка позиции третьей кнопки
+
+    Text button4("About", font, 50);
+    button4.setPosition(100, 800); // Установка позиции четвертой кнопки
+
+    Text about("The Game was created \n by two stogles", font, 50);
+    about.setPosition(500, 400);
+
+    bool isMenu = 1;
+    int menuNum = 0;
+
+    while (isMenu)
+    {
+        menuNum = 0;
+
+        window.clear(Color(129, 181, 221));
+
+        if (IntRect(100, 200, 300, 200).contains(Mouse::getPosition(window))) menuNum = 1; 
+        if (IntRect(100, 300, 300, 200).contains(Mouse::getPosition(window))) menuNum = 2; 
+        if (IntRect(100, 400, 300, 200).contains(Mouse::getPosition(window))) menuNum = 3;
+        if (IntRect(100, 800, 300, 200).contains(Mouse::getPosition(window))) menuNum = 4;
+
+        if (Mouse::isButtonPressed(Mouse::Left))
+        {
+            if (menuNum == 1) isMenu = false;//если нажали первую кнопку, то выходим из меню 
+            if (menuNum == 2) { window.draw(background); print_record(window); window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
+            if (menuNum == 3) { window.close(); isMenu = false; }
+            if (menuNum == 4) { window.draw(background); window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
+
+        }
+
+        window.draw(background);
+        window.draw(button1);
+        window.draw(button2);
+        window.draw(button3);
+        window.draw(button4);
+
+        window.display();
+    }
+    }
+int main()
+{
+
+    RenderWindow window(sf::VideoMode(1600, 900), "GAME15");
+    mainMenu(window);
+    RecordsTable recordsTable;
+
+    //// Пример добавления новой записи
+    //Record rec;
+    //int cont = 1;
+    //while (cont == 1)
+    //{
+    //    cout << "Enter yout Nickname";
+    //    cin >> rec.name;
+    //    cout << endl;
+    //    cout << "Enter yout Score";
+    //    cin >> rec.money;
+    //    cout << endl;
+    //    time_t t = time(NULL);
+    //    rec.date = __DATE__;
+    //    recordsTable.addRecord(rec);
+    //    cout << "continue? (1/0)";
+    //    cin >> cont;
+    //}
+
+    //// Вывод всей таблицы рекордов на экран
+    //recordsTable.printTable();
+
+    //// Сохранение таблицы рекордов в файл
+    //recordsTable.saveTableToFile("records.txt");
+
+    //// Загрузка таблицы рекордов из файла
+    //RecordsTable loadedRecordsTable;
+    //loadedRecordsTable.loadTableFromFile("records.txt");
+
+    //// Вывод загруженной таблицы на экран
+    //loadedRecordsTable.printTable();
 }
