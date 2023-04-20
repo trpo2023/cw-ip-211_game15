@@ -7,7 +7,7 @@
 using namespace sf;
 using namespace std;
 
-// Структура для хранения данных о пользователе и его рекорде
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 struct Record
 {
     string name;
@@ -15,18 +15,188 @@ struct Record
     string date;
 };
 
-// Структура для хранения таблицы рекордов
+
+class Grid {
+public:
+    Grid(int n, int blockSize, int Vx, int Vy) : n_(n), blockSize_(blockSize), Vx_(Vx), Vy_(Vy) {
+        // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°ГіГҐГ¬ Г°Г Г§Г¬ГҐГ°Г» ГЇГ®Г«Гї
+        size_.x = n_ * blockSize_;
+        size_.y = n_ * blockSize_;
+        // Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ ГёГ°ГЁГґГІ
+        font_.loadFromFile("PakenhamBl Italic.ttf");
+        // ГЌГіГ¬ГҐГ°ГіГҐГ¬ ГЇГ«ГЁГІГЄГЁ
+        index_blocks_ = new int* [n_];
+        rigth_index_blocks_ = new int* [n_];
+        for (int i = 0; i < n_; ++i) {
+            index_blocks_[i] = new int[n_];
+            rigth_index_blocks_[i] = new int[n_];
+            for (int j = 0; j < n_; ++j) {
+                index_blocks_[i][j] = i + j * n_;
+                rigth_index_blocks_[i][j] = i + j * n_;
+            }
+        }
+        // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°ГіГҐГ¬ ГЎГ«Г®ГЄГЁ ГЇГ®Г«Гї
+        blocks_ = new sf::RectangleShape * [n_];
+        texts_ = new sf::Text * [n_];
+        for (int i = 0; i < n_; ++i) {
+            blocks_[i] = new sf::RectangleShape[n_];
+            texts_[i] = new sf::Text[n_];
+            for (int j = 0; j < n_; ++j) {
+                if (index_blocks_[i][j] == 0) {
+                    blocks_[i][j].setSize(sf::Vector2f(blockSize_, blockSize_));
+                    blocks_[i][j].setOutlineThickness(1.f);
+                    blocks_[i][j].setOutlineColor(sf::Color::Black);
+                    blocks_[i][j].setFillColor(sf::Color::Black);// Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°ГіГҐГ¬ Г­Г®Г¬ГҐГ° ГЎГ«Г®ГЄГ 
+                    sf::Vector2f pos(i * blockSize_, j * blockSize_);
+                    sf::Text text(std::to_string(index_blocks_[i][j]), font_, 70);
+                    text.setPosition(Vx_ + pos.x + 2.f, Vy_ + pos.y + 2.f);
+                    text.setFillColor(sf::Color::Black);
+                    texts_[i][j] = text;
+                    continue;
+                }
+                blocks_[i][j].setSize(sf::Vector2f(blockSize_, blockSize_));
+                blocks_[i][j].setOutlineThickness(1.f);
+                blocks_[i][j].setOutlineColor(sf::Color::Black);
+                blocks_[i][j].setFillColor(sf::Color::White);
+
+                // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°ГіГҐГ¬ Г­Г®Г¬ГҐГ° ГЎГ«Г®ГЄГ 
+                sf::Vector2f pos(i * blockSize_, j * blockSize_);
+                sf::Text text(std::to_string(index_blocks_[i][j]), font_, 70);
+                text.setPosition((float)(Vx_ + pos.x + 2.f), (float)(Vy_ + pos.y + 2.f));
+                text.setFillColor(sf::Color::Black);
+                texts_[i][j] = text;
+            }
+        }
+    }
+
+    ~Grid() {
+        for (int i = 0; i < n_; ++i) {
+            delete[] blocks_[i];
+        }
+        delete[] blocks_;
+    }
+
+    void Draw(sf::RenderWindow& window) {
+        for (int i = 0; i < n_; ++i) {
+            for (int j = 0; j < n_; ++j) {
+                sf::Vector2f pos(Vx_ + i * blockSize_, Vy_ + j * blockSize_);
+                blocks_[i][j].setPosition(pos);
+                window.draw(blocks_[i][j]);
+                window.draw(texts_[i][j]);
+            }
+        }
+    }
+
+    sf::Vector2f getSize() const {
+        return size_;
+    }
+    void swapBlocks(int x1, int y1, int x2, int y2)
+    {
+        std::string Text_temp;
+        int index_temp;
+        sf::RectangleShape temp;
+        temp = blocks_[x1][y1];
+        blocks_[x1][y1] = blocks_[x2][y2];
+        blocks_[x2][y2] = temp;
+        index_temp = index_blocks_[x1][y1];
+        index_blocks_[x1][y1] = index_blocks_[x2][y2];
+        index_blocks_[x2][y2] = index_temp;
+        texts_[x1][y1].setString(std::to_string(index_blocks_[x1][y1]));
+        texts_[x2][y2].setString(std::to_string(index_blocks_[x2][y2]));
+    }
+    // ГЏГ°Г®ГўГҐГ°ГЄГ  Г­Г  ГЇГ®ГЎГҐГ¤Гі
+    bool CheckWin() {
+        for (int i = 0; i < n_; i++)
+            for (int j = 0; j < n_; j++)
+                if (rigth_index_blocks_[i][j] != index_blocks_[i][j])
+                    return false;
+        return true;
+    }
+private:
+    int** rigth_index_blocks_;
+    int** index_blocks_;
+    int Vx_;
+    int Vy_;
+    int n_; // ГђГ Г§Г¬ГҐГ° ГЇГ®Г«Гї
+    int blockSize_; // ГђГ Г§Г¬ГҐГ° ГЎГ«Г®ГЄГ 
+    sf::Font font_; // ГГ°ГЁГґГІ ГІГҐГЄГ±ГІГ 
+    sf::RectangleShape** blocks_; // ГЃГ«Г®ГЄГЁ ГЇГ®Г«Гї
+    sf::Text** texts_; // Г’ГҐГЄГ±ГІ Г¤Г«Гї Г®ГІГ®ГЎГ°Г Г¦ГҐГ­ГЁГї Г­Г®Г¬ГҐГ°Г®Гў ГЎГ«Г®ГЄГ®Гў
+    sf::Vector2f size_; // ГђГ Г§Г¬ГҐГ°Г» ГЇГ®Г«Гї
+};
+
+void Up(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
+    if (Zeroindex.y != size - 1) {
+        grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x, Zeroindex.y + 1);
+        Zeroindex.y++;
+        count++;
+    }
+}
+void Down(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
+    if (Zeroindex.y != 0) {
+        grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x, Zeroindex.y - 1);
+        Zeroindex.y--;
+        count++;
+    }
+}
+void Left(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
+    if (Zeroindex.x != size - 1) {
+        grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x + 1, Zeroindex.y);
+        Zeroindex.x++;
+        count++;
+    }
+}
+void Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
+    if (Zeroindex.x != 0) {
+        grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x - 1, Zeroindex.y);
+        Zeroindex.x--;
+        count++;
+    }
+}
+
+
+int Game(int n, int blockSize, int Vx, int Vy, sf::RenderWindow& window)
+{
+    int count = 0;
+    sf::Vector2f ZeroIndex(0, 0);
+    char key;
+    bool Pressed = false;
+    sf::Event event;
+    Grid grid(n, blockSize, Vx, Vy);
+    while (window.isOpen())
+    {
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed) window.close();
+            if (event.type == sf::Event::KeyPressed)
+            {
+                // РџРѕР»СѓС‡Р°РµРј РЅР°Р¶Р°С‚СѓСЋ РєР»Р°РІРёС€Сѓ - РІС‹РїРѕР»РЅСЏРµРј СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РµРµ РґРµР№СЃС‚РІРёРµ
+                if (event.key.code == sf::Keyboard::Escape) window.close();
+                if (event.key.code == sf::Keyboard::Left) Left(grid, count, n, ZeroIndex);
+                if (event.key.code == sf::Keyboard::Right) Right(grid, count, n, ZeroIndex);
+                if (event.key.code == sf::Keyboard::Up) Up(grid, count, n, ZeroIndex);
+                if (event.key.code == sf::Keyboard::Down) Down(grid, count, n, ZeroIndex);
+            }
+        }
+        window.clear();
+        grid.Draw(window);
+        window.display();
+    }
+    return count;
+}
+
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 struct RecordsTable
 {
     vector<Record> records;
 
-    // Функция для добавления новой записи
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     void addRecord(Record record)
     {
         records.push_back(record);
     }
 
-    // Функция для вывода всей таблицы рекордов на экран
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     void printTable()
     {
         for (int i = 0; i < records.size(); i++)
@@ -35,7 +205,7 @@ struct RecordsTable
         }
     }
 
-    // Функция для сохранения таблицы рекордов в файл
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
     void saveTableToFile(string fileName)
     {
         ofstream file;
@@ -49,7 +219,7 @@ struct RecordsTable
         file.close();
     }
 
-    // Функция для загрузки таблицы рекордов из файла
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     void loadTableFromFile(string fileName)
     {
         ifstream file;
@@ -62,7 +232,7 @@ struct RecordsTable
             {
                 Record record;
 
-                // Разбиваем строку на отдельные значения и сохраняем их в структуру
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 size_t pos = 0;
                 pos = line.find(" ");
                 record.name = line.substr(0, pos);
@@ -80,19 +250,19 @@ struct RecordsTable
 };
 
 void print_record(RenderWindow& window) {
-    // Открываем файл для чтения
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     ifstream file("records.txt");
     string content;
     Font font;
     bool isRec = true;
     if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
     {
-        // Обработка ошибки, если шрифт не удалось загрузить
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     }
-    // Если файл запущен успешно
+    // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     if (file.is_open())
     {
-        // Считываем содержимое файла в строку
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         string line;
         while (getline(file, line))
         {
@@ -102,15 +272,15 @@ void print_record(RenderWindow& window) {
     }
 
     Text text(content, font, 40);
-    text.setPosition(10, 100); // Позиция текста
+    text.setPosition(10, 100); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
-    // Основной цикл приложения
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     if(isRec)
     {
-        // Отрисовка текста
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         window.draw(text);
 
-        // Отображение созданного кадра
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         window.display();
         while (!Keyboard::isKeyPressed(Keyboard::Escape));
     }
@@ -118,34 +288,34 @@ void print_record(RenderWindow& window) {
 
 void mainMenu(RenderWindow& window)
 {
-    // Создаем фон для главного меню
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("images/img.png"))
     {
-        // Обработка ошибки, если текстуру не удалось загрузить
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     }
     Sprite background(backgroundTexture);
 
-    // Создаем шрифт для текста на кнопках
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     Font font;
     if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
     {
-        // Обработка ошибки, если шрифт не удалось загрузить
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     }
     background.setPosition(-100, 0);
 
-    // Создаем тексты для кнопок
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     Text button1("New Game", font, 50);
-    button1.setPosition(100, 200); // Установка позиции первой кнопки
+    button1.setPosition(100, 200); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
     Text button2("Table Records", font, 50);
-    button2.setPosition(100, 300); // Установка позиции второй кнопки
+    button2.setPosition(100, 300); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
     Text button3("Exit", font, 50);
-    button3.setPosition(100, 400); // Установка позиции третьей кнопки
+    button3.setPosition(100, 400); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
     Text button4("About", font, 50);
-    button4.setPosition(100, 800); // Установка позиции четвертой кнопки
+    button4.setPosition(100, 800); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
     Text about("The Game was created \n by two stogles", font, 50);
     about.setPosition(500, 400);
@@ -166,7 +336,7 @@ void mainMenu(RenderWindow& window)
 
         if (Mouse::isButtonPressed(Mouse::Left))
         {
-            if (menuNum == 1) isMenu = false;//если нажали первую кнопку, то выходим из меню 
+            if (menuNum == 1) isMenu = false;//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ 
             if (menuNum == 2) { window.draw(background); print_record(window); window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
             if (menuNum == 3) { window.close(); isMenu = false; }
             if (menuNum == 4) { window.draw(background); window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
@@ -185,38 +355,6 @@ void mainMenu(RenderWindow& window)
 int main()
 {
 
-    RenderWindow window(sf::VideoMode(1600, 900), "GAME15");
-    mainMenu(window);
-    RecordsTable recordsTable;
-
-    //// Пример добавления новой записи
-    //Record rec;
-    //int cont = 1;
-    //while (cont == 1)
-    //{
-    //    cout << "Enter yout Nickname";
-    //    cin >> rec.name;
-    //    cout << endl;
-    //    cout << "Enter yout Score";
-    //    cin >> rec.money;
-    //    cout << endl;
-    //    time_t t = time(NULL);
-    //    rec.date = __DATE__;
-    //    recordsTable.addRecord(rec);
-    //    cout << "continue? (1/0)";
-    //    cin >> cont;
-    //}
-
-    //// Вывод всей таблицы рекордов на экран
-    //recordsTable.printTable();
-
-    //// Сохранение таблицы рекордов в файл
-    //recordsTable.saveTableToFile("records.txt");
-
-    //// Загрузка таблицы рекордов из файла
-    //RecordsTable loadedRecordsTable;
-    //loadedRecordsTable.loadTableFromFile("records.txt");
-
-    //// Вывод загруженной таблицы на экран
-    //loadedRecordsTable.printTable();
+    RenderWindow window(VideoMode(1800, 900), "Game in 15");
+    Game(5, 100, 600, 100, window);
 }
