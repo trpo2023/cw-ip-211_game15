@@ -275,6 +275,105 @@ int Game(string name, int n, int blockSize, int Vx, int Vy, int randomaze, sf::R
     }
     return count;
 }
+struct RecordsTable
+{
+    vector<Record> records;
+
+    // ������� ��� ���������� ����� ������
+    void addRecord(Record record)
+    {
+        records.push_back(record);
+    }
+
+    // ������� ��� ������ ���� ������� �������� �� �����
+    void printTable()
+    {
+        for (int i = 0; i < records.size(); i++)
+        {
+            cout << "Name: " << records[i].name << " Money: " << records[i].money << " Date: " << records[i].date << endl;
+        }
+    }
+
+    // ������� ��� ���������� ������� �������� � ����
+    void saveTableToFile(string fileName)
+    {
+        ofstream file;
+        file.open(fileName);
+
+        for (int i = 0; i < records.size(); i++)
+        {
+            file << records[i].name << " " << records[i].date << " " << records[i].money << endl;
+        }
+
+        file.close();
+    }
+
+    // ������� ��� �������� ������� �������� �� �����
+    void loadTableFromFile(string fileName)
+    {
+        ifstream file;
+        file.open("records.txt");
+
+        if (file.is_open())
+        {
+            string line;
+            while (getline(file, line))
+            {
+                Record record;
+
+                // ��������� ������ �� ��������� �������� � ��������� �� � ���������
+                size_t pos = 0;
+                pos = line.find(" ");
+                record.name = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                pos = line.find(" ");
+                record.money = stod(line.substr(0, pos));
+                line.erase(0, pos + 1);
+                record.date = line;
+
+                addRecord(record);
+            }
+            file.close();
+        }
+    }
+};
+
+void print_record(RenderWindow& window) {
+    // ��������� ���� ��� ������
+    ifstream file("records.txt");
+    string content;
+    Font font;
+    bool isRec = true;
+    if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
+    {
+        // ��������� ������, ���� ����� �� ������� ���������
+    }
+    // ���� ���� ������� �������
+    if (file.is_open())
+    {
+        // ��������� ���������� ����� � ������
+        string line;
+        while (getline(file, line))
+        {
+            content += line + "\n";
+        }
+        file.close();
+    }
+
+    Text text(content, font, 40);
+    text.setPosition(10, 100); // ������� ������
+
+    // �������� ���� ����������
+    if (isRec)
+    {
+        // ��������� ������
+        window.draw(text);
+
+        // ����������� ���������� �����
+        window.display();
+        while (!Keyboard::isKeyPressed(Keyboard::Escape));
+    }
+}
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(1800, 900), "Game in 15");
