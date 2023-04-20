@@ -208,16 +208,43 @@ void Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
 }
 
 
-int Game(int n, int blockSize, int Vx, int Vy, sf::RenderWindow& window)
+int Game(string name, int n, int blockSize, int Vx, int Vy, int randomaze, sf::RenderWindow& window)
 {
+    Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("images/img.png"))
+        return 1;
+    Sprite background(backgroundTexture);
+    background.setPosition(-100, 0);
+    int rand;
     int count = 0;
     sf::Vector2f ZeroIndex(0, 0);
     char key;
     bool Pressed = false;
     sf::Event event;
     Grid grid(n, blockSize, Vx, Vy);
+    for (int i = 0; i < randomaze; i++) {
+        rand = (std::rand()) % 4;
+        switch (rand) {
+        case 0:
+            Left(grid, count, n, ZeroIndex);
+            break;
+        case 1:
+            Right(grid, count, n, ZeroIndex);
+            break;
+        case 2:
+            Up(grid, count, n, ZeroIndex);
+            break;
+        case 3:
+            Down(grid, count, n, ZeroIndex);
+            break;
+        }
+    }
     while (window.isOpen())
     {
+        if (grid.CheckWin()) {
+            sleep(sf::milliseconds(300));
+            break;
+        }
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed) window.close();
@@ -230,8 +257,10 @@ int Game(int n, int blockSize, int Vx, int Vy, sf::RenderWindow& window)
                 if (event.key.code == sf::Keyboard::Up) Up(grid, count, n, ZeroIndex);
                 if (event.key.code == sf::Keyboard::Down) Down(grid, count, n, ZeroIndex);
             }
+
         }
-        window.clear();
+        window.draw(background);
+        //window.clear();
         grid.Draw(window);
         window.display();
     }
