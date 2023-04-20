@@ -187,6 +187,11 @@ private:
     sf::Vector2f size_; // Ðàçìåðû ïîëÿ
 };
 
+int difficulty(sf::RenderWindow& window) {
+    return 3;
+}
+
+
 void Up(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
     if (Zeroindex.y != size - 1) {
         grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x, Zeroindex.y + 1);
@@ -215,6 +220,7 @@ void Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
         count++;
     }
 }
+
 
 
 int Game(string name, int n, int blockSize, int Vx, int Vy, int randomaze, sf::RenderWindow& window)
