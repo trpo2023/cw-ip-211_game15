@@ -10,61 +10,70 @@ const int HEIGTH = 1000;
 
 
 
-void menu(sf::RenderWindow& window) {
+int mainMenu(RenderWindow& window)
+{
+    // ������� ��� ��� �������� ����
+    Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("images/img.png"))
+        return 1;
+    Sprite background(backgroundTexture);
 
-    sf::Texture menuTexture1, menuTexture2, menuTexture3, menuTexture4, aboutTexture, menuBackground;
-    menuTexture1.loadFromFile("images/111.png");
-    menuTexture2.loadFromFile("images/444.png");
-    menuTexture3.loadFromFile("images/333.png");
-    menuTexture4.loadFromFile("images/222.png");
-    aboutTexture.loadFromFile("images/about.png");
-    menuBackground.loadFromFile("images/img.jpg");
-    sf::Sprite menu1(menuTexture1), menu2(menuTexture2), menu3(menuTexture3), menu4(menuTexture4), about(aboutTexture), menuBg(menuBackground);
+    // ������� ����� ��� ������ �� �������
+    Font font;
+    if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
+        return 1;
+    background.setPosition(-100, 0);
+
+    // ������� ������ ��� ������
+    Text NewGame("New Game", font, 50);
+    NewGame.setPosition(100, 200); // ��������� ������� ������ ������
+
+    Text TableRecords("Table Records", font, 50);
+    TableRecords.setPosition(100, 300); // ��������� ������� ������ ������
+
+    Text Exit("Exit", font, 50);
+    Exit.setPosition(100, 400); // ��������� ������� ������� ������
+
+    Text About("About", font, 50);
+    About.setPosition(100, 800); // ��������� ������� ��������� ������
+
+    Text about("The Game was created \n by two stogles", font, 50);
+    about.setPosition(500, 400);
+    int diff;
+    string name;
     bool isMenu = 1;
     int menuNum = 0;
-    menu1.setPosition(100, 30);
-    menu2.setPosition(100, 90);
-    menu3.setPosition(100, 150);
-    menu4.setPosition(100, 600);
-    menuBg.setPosition(345, 0);
+
     while (isMenu)
     {
-        menu1.setColor(sf::Color::White);
-        menu2.setColor(sf::Color::White);
-        menu3.setColor(sf::Color::White);
-        menu4.setColor(sf::Color::White);
         menuNum = 0;
-        window.clear(sf::Color(129, 181, 221));
 
-        if (sf::IntRect(100, 30, 300, 50).contains(sf::Mouse::getPosition(window))) { menu1.setColor(sf::Color::Blue); menuNum = 1; }
-        if (sf::IntRect(100, 90, 300, 50).contains(sf::Mouse::getPosition(window))) { menu2.setColor(sf::Color::Blue); menuNum = 2; }
-        if (sf::IntRect(100, 150, 300, 50).contains(sf::Mouse::getPosition(window))) { menu3.setColor(sf::Color::Blue); menuNum = 3; }
-        if (sf::IntRect(100, 210, 300, 50).contains(sf::Mouse::getPosition(window))) { menu4.setColor(sf::Color::Blue); menuNum = 4; }
+        window.clear(Color(129, 181, 221));
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        if (IntRect(100, 200, 300, 200).contains(Mouse::getPosition(window))) menuNum = 1;//
+        if (IntRect(100, 300, 300, 200).contains(Mouse::getPosition(window))) menuNum = 2;//
+        if (IntRect(100, 400, 300, 200).contains(Mouse::getPosition(window))) menuNum = 3;//
+        if (IntRect(100, 800, 300, 200).contains(Mouse::getPosition(window))) menuNum = 4;//
+
+        if (Mouse::isButtonPressed(Mouse::Left))
         {
-            if (menuNum == 1) isMenu = false;
-            if (menuNum == 2) {
-                window.draw(menuBg);
-                window.display();
-                //table_record(); 
-                while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
+            if (menuNum == 1) {
+                diff = difficulty(window);
+                name = EnterTheName(window);
+                Game(name, diff, BlockSize, 900 - BlockSize * diff, 450 - BlockSize * diff, 1000, window);
             }
-            if (menuNum == 3)
-                window.close(); isMenu = false;
-            if (menuNum == 4) {
-                window.draw(about);
-                window.display();
-                while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
-            }
+            if (menuNum == 2) { window.draw(background); print_record(window); window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
+            if (menuNum == 3) { isMenu = false; }
+            if (menuNum == 4) { window.draw(background); window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
 
         }
 
-        window.draw(menuBg);
-        window.draw(menu1);
-        window.draw(menu2);
-        window.draw(menu3);
-        window.draw(menu4);
+        window.draw(background);
+        window.draw(NewGame);
+        window.draw(TableRecords);
+        window.draw(Exit);
+        window.draw(About);
+
         window.display();
     }
 }
