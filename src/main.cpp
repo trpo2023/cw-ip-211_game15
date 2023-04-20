@@ -85,7 +85,7 @@ public:
         size_.x = n_ * blockSize_;
         size_.y = n_ * blockSize_;
         // Çàãðóæàåì øðèôò
-        font_.loadFromFile("PakenhamBl Italic.ttf");
+        font_.loadFromFile("images/PakenhamBl_Italic.ttf");
         // Íóìåðóåì ïëèòêè
         index_blocks_ = new int* [n_];
         rigth_index_blocks_ = new int* [n_];
@@ -186,6 +186,77 @@ private:
     sf::Text** texts_; // Òåêñò äëÿ îòîáðàæåíèÿ íîìåðîâ áëîêîâ
     sf::Vector2f size_; // Ðàçìåðû ïîëÿ
 };
+
+std::string EnterTheName(sf::RenderWindow& window) {
+    sf::RectangleShape square;
+    square.setFillColor(sf::Color::Black);
+    square.setSize(sf::Vector2f(250, 35));
+    square.setPosition(745, 400);
+    Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("images/img.png"))
+        return "Error";
+    Sprite background(backgroundTexture);
+    background.setPosition(-100, 0);
+    sf::Font font;
+    if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
+    {
+        std::cout << "Failed to load font" << std::endl;
+        return "Error";
+    }
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(750, 400);
+
+    sf::Text EnterTheName;
+    EnterTheName.setFont(font);
+    EnterTheName.setString("Enter The Name");
+    EnterTheName.setFillColor(sf::Color::White);
+    EnterTheName.setPosition(750, 100);
+
+    std::string input;
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                window.close();
+            }
+            else if (event.key.code == sf::Keyboard::Enter && input.size() > 0) // Enter
+                return input;
+            else if (event.type == sf::Event::TextEntered)
+            {
+                if (event.text.unicode < 128) // check if input is ASCII
+                {
+                    if (event.text.unicode == '\b' && input.size() > 0) // backspace
+                    {
+                        input.pop_back();
+                    }
+
+                    else if (event.text.unicode != '\b' && input.size() < 20)
+                    {
+                        input += static_cast<char>(event.text.unicode);
+                    }
+                    text.setString(input);
+                }
+            }
+        }
+
+
+        window.draw(background);
+        window.draw(square);
+        window.draw(text);
+        window.draw(EnterTheName);
+        window.display();
+    }
+
+    return input;
+}
 
 int difficulty(sf::RenderWindow& window) {
     return 3;
