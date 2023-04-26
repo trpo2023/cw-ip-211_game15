@@ -1,70 +1,74 @@
 ﻿#include <SFML/Graphics.hpp>
+#include <string>
+#include <fstream>
 #include <iostream>
+#include <windows.h>
 #include <random>
-#include <algorithm>
-#include <vector>
-#include <conio.h>
 
 const int WIGTH = 1000;
 const int HEIGTH = 1000;
 
 
 
-int mainMenu(RenderWindow& window)
+int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font, RecordsTable Table)
 {
-    // ������� ��� ��� �������� ����
-    Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("images/img.png"))
-        return 1;
-    Sprite background(backgroundTexture);
+    sf::Text NewGame("New Game", font, NewGame_Size);
+    NewGame.setPosition(NewGame_X, NewGame_Y); 
 
-    // ������� ����� ��� ������ �� �������
-    Font font;
-    if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
-        return 1;
-    background.setPosition(-100, 0);
+    sf::Text TableRecords("Table Records", font, TableRecords_Size);
+    TableRecords.setPosition(TableRecords_X, TableRecords_Y); // Кнопка "Таблица рекордов"
 
-    // ������� ������ ��� ������
-    Text NewGame("New Game", font, 50);
-    NewGame.setPosition(100, 200); // ��������� ������� ������ ������
+    sf::Text Exit("Exit", font, Exit_Size);
+    Exit.setPosition(Exit_X, Exit_Y); // Кнопка "Выход"
 
-    Text TableRecords("Table Records", font, 50);
-    TableRecords.setPosition(100, 300); // ��������� ������� ������ ������
+    sf::Text About("About", font, About_Size);
+    About.setPosition(About_X, About_Y); // Кнопка "О создателях"
 
-    Text Exit("Exit", font, 50);
-    Exit.setPosition(100, 400); // ��������� ������� ������� ������
+    sf::Text about("The Game was created \n by two stogles", font, 50);
+        about.setPosition(500, 400);
 
-    Text About("About", font, 50);
-    About.setPosition(100, 800); // ��������� ������� ��������� ������
-
-    Text about("The Game was created \n by two stogles", font, 50);
-    about.setPosition(500, 400);
     int diff;
-    string name;
+    int count;
+    std::string name;
     bool isMenu = 1;
     int menuNum = 0;
+    Record NewRecord;
+    
 
-    while (isMenu)
+    while (isMenu && window.isOpen())
     {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
         menuNum = 0;
 
-        window.clear(Color(129, 181, 221));
+        window.clear(sf::Color(129, 181, 221));
 
-        if (IntRect(100, 200, 300, 200).contains(Mouse::getPosition(window))) menuNum = 1;//
-        if (IntRect(100, 300, 300, 200).contains(Mouse::getPosition(window))) menuNum = 2;//
-        if (IntRect(100, 400, 300, 200).contains(Mouse::getPosition(window))) menuNum = 3;//
-        if (IntRect(100, 800, 300, 200).contains(Mouse::getPosition(window))) menuNum = 4;//
+        if (sf::IntRect(100, 200, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 1;//
+        if (sf::IntRect(100, 300, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 2;//
+        if (sf::IntRect(100, 400, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 3;//
+        if (sf::IntRect(100, 800, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 4;//
 
-        if (Mouse::isButtonPressed(Mouse::Left))
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
             if (menuNum == 1) {
-                diff = difficulty(window);
+                diff = Difficulty(window, font, background);
+                if (diff == 0) continue;
                 name = EnterTheName(window);
-                Game(name, diff, BlockSize, 900 - BlockSize * diff, 450 - BlockSize * diff, 1000, window);
+                if (name == "0") continue;
+                count = Game(name, diff, BlockSize, WIGHT / 2 - BlockSize * diff, HEIGHT / 2 - BlockSize * diff, 1000, window, background, font);
+                NewRecord.name = name;
+                NewRecord.money = std::to_string(diff * 1000 - count * 10);
+                NewRecord.date = std::to_string(count);
+                Table.addRecord(NewRecord);
+                Table.saveTableToFile();
             }
-            if (menuNum == 2) { window.draw(background); print_record(window); window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
+            if (menuNum == 2) { DrawRecords(window, background, font, about); }
             if (menuNum == 3) { isMenu = false; }
-            if (menuNum == 4) { window.draw(background); window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
+            if (menuNum == 4) { window.draw(background); window.draw(about); window.display(); while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)); }
 
         }
 
@@ -73,10 +77,11 @@ int mainMenu(RenderWindow& window)
         window.draw(TableRecords);
         window.draw(Exit);
         window.draw(About);
-
         window.display();
     }
+    return 0;
 }
+
 
 class Grid {
 public:
