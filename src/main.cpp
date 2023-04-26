@@ -565,7 +565,22 @@ void print_record(RenderWindow& window) {
     }
 }
 
-int main() {
-    sf::RenderWindow window(sf::VideoMode(1800, 900), "Game in 15");
-    Game(5, 100, 600, 100, window);
+int main()
+{
+    RecordsTable Table;
+    Table.loadTableFromFile();
+    sf::Font font;
+    sf::Texture backgroundTexture;
+
+    if (!backgroundTexture.loadFromFile(IMAGE)) // Загружает текстуру фона
+        return 1; // Если текстуры нет, то возвращает ошибку
+    sf::Sprite background(backgroundTexture); // Задаем текстуру фону
+
+    background.setPosition(-100, 0); // Задаем координаты фона
+    if (!font.loadFromFile(FONT)) // Загружаем шрифт
+        return 1; // Если шрифта нет, то возвращаем ошибку
+
+    sf::RenderWindow window(sf::VideoMode(WIGHT, HEIGHT), "Game in 15"); // Инициализация окна
+
+    MainMenu(window,background,font,Table); // Отрисовка главного меню
 }
