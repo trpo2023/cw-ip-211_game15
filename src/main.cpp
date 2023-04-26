@@ -459,21 +459,13 @@ int Game(std::string name, int n, int blockSize, int Vx, int Vy, int randomaze, 
     return count;
 }
 
-void print_record(RenderWindow& window) {
-    // ��������� ���� ��� ������
-    ifstream file("records.txt");
-    string content;
-    Font font;
+void PrintRecord(sf::RenderWindow& window,sf::Font font) {
+    std::ifstream file("records.txt");
+    std::string content;
     bool isRec = true;
-    if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
-    {
-        // ��������� ������, ���� ����� �� ������� ���������
-    }
-    // ���� ���� ������� �������
     if (file.is_open())
     {
-        // ��������� ���������� ����� � ������
-        string line;
+        std::string line;
         while (getline(file, line))
         {
             content += line + "\n";
@@ -481,7 +473,7 @@ void print_record(RenderWindow& window) {
         file.close();
     }
 
-    Text text(content, font, 40);
+    sf::Text text(content, font, 40);
     text.setPosition(10, 100); // ������� ������
 
     // �������� ���� ����������
@@ -492,7 +484,7 @@ void print_record(RenderWindow& window) {
 
         // ����������� ���������� �����
         window.display();
-        while (!Keyboard::isKeyPressed(Keyboard::Escape));
+        while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
     }
 }
 
