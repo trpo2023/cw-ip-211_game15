@@ -273,8 +273,54 @@ std::string EnterTheName(sf::RenderWindow& window) {
     return input;
 }
 
-int difficulty(sf::RenderWindow& window) {
-    return 3;
+int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background) {
+    // Создаем шрифт для отображения текста на кнопках
+    
+    // Создаем кнопки
+    sf::Text Easy("Easy", font, 40);
+    Easy.setFillColor(sf::Color::White);
+    Easy.setPosition(50, 50);
+
+    sf::Text Normal("Normal", font, 40);
+    Normal.setFillColor(sf::Color::White);
+    Normal.setPosition(50, 150);
+
+    sf::Text Hard("Hard", font, 40);
+    Hard.setFillColor(sf::Color::White);
+    Hard.setPosition(50, 250);
+
+    // Отображаем кнопки на экране
+    window.draw(background);
+    window.draw(Easy);
+    window.draw(Normal);
+    window.draw(Hard);
+    window.display();
+
+    // Обрабатываем события до тех пор, пока пользователь не выберет сложность
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            else if (event.key.code == sf::Keyboard::Escape) return 0;
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                // Проверяем на какую кнопку нажал пользователь
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    if (Easy.getGlobalBounds().contains(mousePosition)) {
+                        return 3;
+                    }
+                    else if (Normal.getGlobalBounds().contains(mousePosition)) {
+                        return 4;
+                    }
+                    else if (Hard.getGlobalBounds().contains(mousePosition)) {
+                        return 5;
+                    }
+                }
+            }
+        }
+    }
 }
 
 
