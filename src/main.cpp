@@ -405,36 +405,30 @@ void Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
     }
 }
 
-
-
-int Game(string name, int n, int blockSize, int Vx, int Vy, int randomaze, sf::RenderWindow& window)
+int Game(std::string name, int n, int blockSize, int Vx, int Vy, int randomaze, sf::RenderWindow& window, sf::Sprite background,sf::Font font)
 {
-    Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("images/img.png"))
-        return 1;
-    Sprite background(backgroundTexture);
-    background.setPosition(-100, 0);
     int rand;
     int count = 0;
+    int randcount = 0;
     sf::Vector2f ZeroIndex(0, 0);
     char key;
     bool Pressed = false;
     sf::Event event;
-    Grid grid(n, blockSize, Vx, Vy);
+    Grid grid(n, blockSize, Vx, Vy,font);
     for (int i = 0; i < randomaze; i++) {
         rand = (std::rand()) % 4;
         switch (rand) {
         case 0:
-            Left(grid, count, n, ZeroIndex);
+            Left(grid, randcount, n, ZeroIndex);
             break;
         case 1:
-            Right(grid, count, n, ZeroIndex);
+            Right(grid, randcount, n, ZeroIndex);
             break;
         case 2:
-            Up(grid, count, n, ZeroIndex);
+            Up(grid, randcount, n, ZeroIndex);
             break;
         case 3:
-            Down(grid, count, n, ZeroIndex);
+            Down(grid, randcount, n, ZeroIndex);
             break;
         }
     }
@@ -450,83 +444,20 @@ int Game(string name, int n, int blockSize, int Vx, int Vy, int randomaze, sf::R
             if (event.type == sf::Event::KeyPressed)
             {
                 // Получаем нажатую клавишу - выполняем соответствующее действие
-                if (event.key.code == sf::Keyboard::Escape) window.close();
+                if (event.key.code == sf::Keyboard::Escape) return 0;
                 if (event.key.code == sf::Keyboard::Left) Left(grid, count, n, ZeroIndex);
                 if (event.key.code == sf::Keyboard::Right) Right(grid, count, n, ZeroIndex);
                 if (event.key.code == sf::Keyboard::Up) Up(grid, count, n, ZeroIndex);
                 if (event.key.code == sf::Keyboard::Down) Down(grid, count, n, ZeroIndex);
             }
-
+            
         }
         window.draw(background);
-        //window.clear();
         grid.Draw(window);
         window.display();
     }
     return count;
 }
-struct RecordsTable
-{
-    vector<Record> records;
-
-    // ������� ��� ���������� ����� ������
-    void addRecord(Record record)
-    {
-        records.push_back(record);
-    }
-
-    // ������� ��� ������ ���� ������� �������� �� �����
-    void printTable()
-    {
-        for (int i = 0; i < records.size(); i++)
-        {
-            cout << "Name: " << records[i].name << " Money: " << records[i].money << " Date: " << records[i].date << endl;
-        }
-    }
-
-    // ������� ��� ���������� ������� �������� � ����
-    void saveTableToFile(string fileName)
-    {
-        ofstream file;
-        file.open(fileName);
-
-        for (int i = 0; i < records.size(); i++)
-        {
-            file << records[i].name << " " << records[i].date << " " << records[i].money << endl;
-        }
-
-        file.close();
-    }
-
-    // ������� ��� �������� ������� �������� �� �����
-    void loadTableFromFile(string fileName)
-    {
-        ifstream file;
-        file.open("records.txt");
-
-        if (file.is_open())
-        {
-            string line;
-            while (getline(file, line))
-            {
-                Record record;
-
-                // ��������� ������ �� ��������� �������� � ��������� �� � ���������
-                size_t pos = 0;
-                pos = line.find(" ");
-                record.name = line.substr(0, pos);
-                line.erase(0, pos + 1);
-                pos = line.find(" ");
-                record.money = stod(line.substr(0, pos));
-                line.erase(0, pos + 1);
-                record.date = line;
-
-                addRecord(record);
-            }
-            file.close();
-        }
-    }
-};
 
 void print_record(RenderWindow& window) {
     // ��������� ���� ��� ������
