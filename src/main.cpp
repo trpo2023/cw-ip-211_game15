@@ -19,7 +19,59 @@ int Normal_Size = 50, Normal_X = 100, Normal_Y = 200; // "Средний"
 int Hard_Size = 50, Hard_X = 100, Hard_Y = 200; // "Тяжелый"
 int Field_Size = 50, Field_X = 100, Field_Y = 200; // Поле для Ввода
 
+struct Record
+{
+    std::string name;
+    std::string money;
+    std::string date;
+};
+struct RecordsTable
+{
+    std::vector<Record> records;
+    // Метод создания новой записи
+    void addRecord(Record record)
+    {
+        records.push_back(record);
+    }
+    // Сохранение таблицы в файле
+    void saveTableToFile() 
+    {
+        std::ofstream file;
+        file.open("records.txt");
 
+        for (int i = 0; i < records.size(); i++)
+        {
+            file << records[i].name << " " << records[i].date << " " << records[i].money << std::endl;
+        }
+
+        file.close();
+    }
+    // Загрузка таблицы из файла
+    void loadTableFromFile()
+    {
+        std::ifstream file;
+        file.open("records.txt");
+        if (file.is_open())
+        {
+            std::string line;
+            while (getline(file, line))
+            {
+                Record record;
+                // ��������� ������ �� ��������� �������� � ��������� �� � ���������
+                size_t pos = 0;
+                pos = line.find(" ");
+                record.name = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                pos = line.find(" ");
+                record.money = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                record.date = line;
+                addRecord(record);
+            }
+            file.close();
+        }
+    }
+};
 
 int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font, RecordsTable Table)
 {
