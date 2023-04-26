@@ -34,7 +34,7 @@ struct RecordsTable
         records.push_back(record);
     }
     // Сохранение таблицы в файле
-    void saveTableToFile() 
+    void saveTableToFile()
     {
         std::ofstream file;
         file.open("records.txt");
@@ -72,80 +72,6 @@ struct RecordsTable
         }
     }
 };
-
-int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font, RecordsTable Table)
-{
-    sf::Text NewGame("New Game", font, NewGame_Size);
-    NewGame.setPosition(NewGame_X, NewGame_Y); 
-
-    sf::Text TableRecords("Table Records", font, TableRecords_Size);
-    TableRecords.setPosition(TableRecords_X, TableRecords_Y); // Кнопка "Таблица рекордов"
-
-    sf::Text Exit("Exit", font, Exit_Size);
-    Exit.setPosition(Exit_X, Exit_Y); // Кнопка "Выход"
-
-    sf::Text About("About", font, About_Size);
-    About.setPosition(About_X, About_Y); // Кнопка "О создателях"
-
-    sf::Text about("The Game was created \n by two stogles", font, 50);
-        about.setPosition(500, 400);
-
-    int diff;
-    int count;
-    std::string name;
-    bool isMenu = 1;
-    int menuNum = 0;
-    Record NewRecord;
-    
-
-    while (isMenu && window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-        menuNum = 0;
-
-        window.clear(sf::Color(129, 181, 221));
-
-        if (sf::IntRect(100, 200, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 1;//
-        if (sf::IntRect(100, 300, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 2;//
-        if (sf::IntRect(100, 400, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 3;//
-        if (sf::IntRect(100, 800, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 4;//
-
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {
-            if (menuNum == 1) {
-                diff = Difficulty(window, font, background);
-                if (diff == 0) continue;
-                name = EnterTheName(window);
-                if (name == "0") continue;
-                count = Game(name, diff, BlockSize, WIGHT / 2 - BlockSize * diff, HEIGHT / 2 - BlockSize * diff, 1000, window, background, font);
-                NewRecord.name = name;
-                NewRecord.money = std::to_string(diff * 1000 - count * 10);
-                NewRecord.date = std::to_string(count);
-                Table.addRecord(NewRecord);
-                Table.saveTableToFile();
-            }
-            if (menuNum == 2) { DrawRecords(window, background, font, about); }
-            if (menuNum == 3) { isMenu = false; }
-            if (menuNum == 4) { window.draw(background); window.draw(about); window.display(); while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)); }
-
-        }
-
-        window.draw(background);
-        window.draw(NewGame);
-        window.draw(TableRecords);
-        window.draw(Exit);
-        window.draw(About);
-        window.display();
-    }
-    return 0;
-}
-
-
 class Grid {
 private:
     int** right_index_blocks_;// Массив с верным расположением индексов блоков в сетке
@@ -159,7 +85,7 @@ private:
     sf::Text** texts_; // Массив с текстом для нумерации плиток
     sf::Vector2f size_; // Размеры сетки
 public:
-    Grid(int n, int blockSize, int Vx, int Vy,sf::Font font) : n_(n), blockSize_(blockSize), Vx_(Vx), Vy_(Vy),font_(font) {
+    Grid(int n, int blockSize, int Vx, int Vy, sf::Font font) : n_(n), blockSize_(blockSize), Vx_(Vx), Vy_(Vy), font_(font) {
         // Устанавливаем размеры сетки
         size_.x = size_.y = n_ * blockSize_;
         // Создаем индексные массивы
@@ -253,22 +179,12 @@ public:
 };
 
 
-std::string EnterTheName(sf::RenderWindow& window) {
+std::string EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font) {
     sf::RectangleShape Field;
     Field.setFillColor(sf::Color::Black);
     Field.setSize(sf::Vector2f(250, 35));
-    Field.setPosition(745,400);
-    sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("images/img.png"))
-        return "Error";
-    sf::Sprite background(backgroundTexture);
-    background.setPosition(-100, 0);
-    sf::Font font;
-    if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
-    {
-        std::cout << "Failed to load font" << std::endl;
-        return "Error";
-    }
+    Field.setPosition(745, 400);
+
 
     sf::Text text;
     text.setFont(font);
@@ -314,7 +230,7 @@ std::string EnterTheName(sf::RenderWindow& window) {
             }
         }
 
-        
+
         window.draw(background);
         window.draw(Field);
         window.draw(text);
@@ -327,7 +243,7 @@ std::string EnterTheName(sf::RenderWindow& window) {
 
 int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background) {
     // Создаем шрифт для отображения текста на кнопках
-    
+
     // Создаем кнопки
     sf::Text Easy("Easy", font, 40);
     Easy.setFillColor(sf::Color::White);
@@ -375,7 +291,6 @@ int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background) {
     }
 }
 
-
 void Up(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
     if (Zeroindex.y != size - 1) {
         grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x, Zeroindex.y + 1);
@@ -405,7 +320,7 @@ void Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex) {
     }
 }
 
-int Game(std::string name, int n, int blockSize, int Vx, int Vy, int randomaze, sf::RenderWindow& window, sf::Sprite background,sf::Font font)
+int Game(std::string name, int n, int blockSize, int Vx, int Vy, int randomaze, sf::RenderWindow& window, sf::Sprite background, sf::Font font)
 {
     int rand;
     int count = 0;
@@ -414,7 +329,7 @@ int Game(std::string name, int n, int blockSize, int Vx, int Vy, int randomaze, 
     char key;
     bool Pressed = false;
     sf::Event event;
-    Grid grid(n, blockSize, Vx, Vy,font);
+    Grid grid(n, blockSize, Vx, Vy, font);
     for (int i = 0; i < randomaze; i++) {
         rand = (std::rand()) % 4;
         switch (rand) {
@@ -450,7 +365,7 @@ int Game(std::string name, int n, int blockSize, int Vx, int Vy, int randomaze, 
                 if (event.key.code == sf::Keyboard::Up) Up(grid, count, n, ZeroIndex);
                 if (event.key.code == sf::Keyboard::Down) Down(grid, count, n, ZeroIndex);
             }
-            
+
         }
         window.draw(background);
         grid.Draw(window);
@@ -459,12 +374,11 @@ int Game(std::string name, int n, int blockSize, int Vx, int Vy, int randomaze, 
     return count;
 }
 
-void PrintRecord(sf::RenderWindow& window,sf::Font font) {
+void PrintRecord(sf::RenderWindow& window, sf::Font font) {
     std::ifstream file("records.txt");
     std::string content;
     bool isRec = true;
-    if (file.is_open())
-    {
+    if (file.is_open()) {
         std::string line;
         while (getline(file, line))
         {
@@ -474,18 +388,93 @@ void PrintRecord(sf::RenderWindow& window,sf::Font font) {
     }
 
     sf::Text text(content, font, 40);
-    text.setPosition(10, 100); // ������� ������
+    text.setPosition(10, 100);
 
-    // �������� ���� ����������
-    if (isRec)
-    {
-        // ��������� ������
+    if (isRec) {
         window.draw(text);
-
-        // ����������� ���������� �����
         window.display();
         while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
     }
+}
+
+void DrawRecords(sf::RenderWindow& window, sf::Sprite background, sf::Font font, sf::Text about) {
+
+    window.draw(background);
+    PrintRecord(window, font);
+    window.draw(about);
+    window.display();
+    while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
+}
+
+int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font, RecordsTable Table)
+{
+    sf::Text NewGame("New Game", font, NewGame_Size);
+    NewGame.setPosition(NewGame_X, NewGame_Y);
+
+    sf::Text TableRecords("Table Records", font, TableRecords_Size);
+    TableRecords.setPosition(TableRecords_X, TableRecords_Y); // Кнопка "Таблица рекордов"
+
+    sf::Text Exit("Exit", font, Exit_Size);
+    Exit.setPosition(Exit_X, Exit_Y); // Кнопка "Выход"
+
+    sf::Text About("About", font, About_Size);
+    About.setPosition(About_X, About_Y); // Кнопка "О создателях"
+
+    sf::Text about("The Game was created \n by two stogles", font, 50);
+    about.setPosition(500, 400);
+
+    int diff;
+    int count;
+    std::string name;
+    bool isMenu = 1;
+    int menuNum = 0;
+    Record NewRecord;
+
+
+    while (isMenu && window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        menuNum = 0;
+
+        window.clear(sf::Color(129, 181, 221));
+
+        if (sf::IntRect(100, 200, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 1;// Начать игру
+        if (sf::IntRect(100, 300, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 2;// Таблица рекордов
+        if (sf::IntRect(100, 400, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 3;// Выход
+        if (sf::IntRect(100, 800, 300, 200).contains(sf::Mouse::getPosition(window))) menuNum = 4;// О создателях
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            if (menuNum == 1) {
+                diff = Difficulty(window, font, background);
+                if (diff == 0) continue;
+                name = EnterTheName(window, background, font);
+                if (name == "0") continue;
+                count = Game(name, diff, BlockSize, WIGHT / 2 - BlockSize * diff, HEIGHT / 2 - BlockSize * diff, 1000, window, background, font);
+                NewRecord.name = name;
+                NewRecord.money = std::to_string(diff * 1000 - count * 10);
+                NewRecord.date = std::to_string(count);
+                Table.addRecord(NewRecord);
+                Table.saveTableToFile();
+            }
+            if (menuNum == 2) { DrawRecords(window, background, font, about); window.display(); while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)); }
+            if (menuNum == 3) { isMenu = false; }
+            if (menuNum == 4) { window.draw(background); window.draw(about); window.display(); while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)); }
+        }
+
+        window.draw(background);
+        window.draw(NewGame);
+        window.draw(TableRecords);
+        window.draw(Exit);
+        window.draw(About);
+        window.display();
+    }
+    return 0;
 }
 
 int main()
@@ -505,5 +494,6 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(WIGHT, HEIGHT), "Game in 15"); // Инициализация окна
 
-    MainMenu(window,background,font,Table); // Отрисовка главного меню
+    MainMenu(window, background, font, Table); // Отрисовка главного меню
 }
+
