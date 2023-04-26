@@ -95,22 +95,30 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font, Rec
 
 
 class Grid {
+private:
+    int** right_index_blocks_;// Массив с верным расположением индексов блоков в сетке
+    int** index_blocks_; // Массив с текущим расположением индексов блоков в сетке
+    int Vx_; // Смещение сетки по X
+    int Vy_; // Смещение сетки по Y
+    int n_; // Количество плиток
+    int blockSize_; // Размер плитки
+    sf::Font font_; // Шрифт
+    sf::RectangleShape** blocks_; // Массив с текущим расположением плиток в сетке
+    sf::Text** texts_; // Массив с текстом для нумерации плиток
+    sf::Vector2f size_; // Размеры сетки
 public:
-    Grid(int n, int blockSize, int Vx, int Vy) : n_(n), blockSize_(blockSize), Vx_(Vx), Vy_(Vy) {
-        // Èíèöèàëèçèðóåì ðàçìåðû ïîëÿ
-        size_.x = n_ * blockSize_;
-        size_.y = n_ * blockSize_;
-        // Çàãðóæàåì øðèôò
-        font_.loadFromFile("images/PakenhamBl_Italic.ttf");
-        // Íóìåðóåì ïëèòêè
+    Grid(int n, int blockSize, int Vx, int Vy,sf::Font font) : n_(n), blockSize_(blockSize), Vx_(Vx), Vy_(Vy),font_(font) {
+        // Устанавливаем размеры сетки
+        size_.x = size_.y = n_ * blockSize_;
+        // Создаем индексные массивы
         index_blocks_ = new int* [n_];
-        rigth_index_blocks_ = new int* [n_];
+        right_index_blocks_ = new int* [n_];
         for (int i = 0; i < n_; ++i) {
             index_blocks_[i] = new int[n_];
-            rigth_index_blocks_[i] = new int[n_];
+            right_index_blocks_[i] = new int[n_];
             for (int j = 0; j < n_; ++j) {
                 index_blocks_[i][j] = i + j * n_;
-                rigth_index_blocks_[i][j] = i + j * n_;
+                right_index_blocks_[i][j] = i + j * n_;
             }
         }
         // Èíèöèàëèçèðóåì áëîêè ïîëÿ
@@ -124,7 +132,7 @@ public:
                     blocks_[i][j].setSize(sf::Vector2f(blockSize_, blockSize_));
                     blocks_[i][j].setOutlineThickness(1.f);
                     blocks_[i][j].setOutlineColor(sf::Color::Black);
-                    blocks_[i][j].setFillColor(sf::Color::Black);// Èíèöèàëèçèðóåì íîìåð áëîêà
+                    blocks_[i][j].setFillColor(sf::Color::Black);
                     sf::Vector2f pos(i * blockSize_, j * blockSize_);
                     sf::Text text(std::to_string(index_blocks_[i][j]), font_, 70);
                     text.setPosition(Vx_ + pos.x + 2.f, Vy_ + pos.y + 2.f);
@@ -186,32 +194,22 @@ public:
     bool CheckWin() {
         for (int i = 0; i < n_; i++)
             for (int j = 0; j < n_; j++)
-                if (rigth_index_blocks_[i][j] != index_blocks_[i][j])
+                if (right_index_blocks_[i][j] != index_blocks_[i][j])
                     return false;
         return true;
     }
-private:
-    int** rigth_index_blocks_;
-    int** index_blocks_;
-    int Vx_;
-    int Vy_;
-    int n_; // Ðàçìåð ïîëÿ
-    int blockSize_; // Ðàçìåð áëîêà
-    sf::Font font_; // Øðèôò òåêñòà
-    sf::RectangleShape** blocks_; // Áëîêè ïîëÿ
-    sf::Text** texts_; // Òåêñò äëÿ îòîáðàæåíèÿ íîìåðîâ áëîêîâ
-    sf::Vector2f size_; // Ðàçìåðû ïîëÿ
 };
 
+
 std::string EnterTheName(sf::RenderWindow& window) {
-    sf::RectangleShape square;
-    square.setFillColor(sf::Color::Black);
-    square.setSize(sf::Vector2f(250, 35));
-    square.setPosition(745, 400);
-    Texture backgroundTexture;
+    sf::RectangleShape Field;
+    Field.setFillColor(sf::Color::Black);
+    Field.setSize(sf::Vector2f(250, 35));
+    Field.setPosition(745,400);
+    sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("images/img.png"))
         return "Error";
-    Sprite background(backgroundTexture);
+    sf::Sprite background(backgroundTexture);
     background.setPosition(-100, 0);
     sf::Font font;
     if (!font.loadFromFile("images/PakenhamBl_Italic.ttf"))
@@ -243,6 +241,7 @@ std::string EnterTheName(sf::RenderWindow& window) {
             {
                 window.close();
             }
+            else if (event.key.code == sf::Keyboard::Escape) return "0";
             else if (event.key.code == sf::Keyboard::Enter && input.size() > 0) // Enter
                 return input;
             else if (event.type == sf::Event::TextEntered)
@@ -263,9 +262,9 @@ std::string EnterTheName(sf::RenderWindow& window) {
             }
         }
 
-
+        
         window.draw(background);
-        window.draw(square);
+        window.draw(Field);
         window.draw(text);
         window.draw(EnterTheName);
         window.display();
