@@ -6,13 +6,14 @@
 #include <string>
 #include <windows.h>
 
-const char* IMAGE = "images/image.jpg"; // Путь к картинке заднего фона
-const char* FONT = "images/PakenhamBl_Italic.ttf"; // Путь к шрифту
-const char* YOUWIN
-        = "images/YouWinTexture.jpg"; // Путь к текстуре "Ты Выиграл!"
-int BlockSize = 100;                  // Размер блока
-int WIGHT = 1800;                     // Ширина окна
-int HEIGHT = 900;                     // Высота окна
+const char* IMAGE
+        = "../external/images/image.jpg"; // Путь к картинке заднего фона
+const char* FONT = "../external/images/PakenhamBl_Italic.ttf"; // Путь к шрифту
+const char* YOUWIN = "../external/images/YouWinTexture.jpg"; // Путь к текстуре
+                                                             // "Ты Выиграл!"
+int BlockSize = 100; // Размер блока
+int WIGHT = 1800;    // Ширина окна
+int HEIGHT = 900;    // Высота окна
 int NewGame_Size = 50, NewGame_X = 100, NewGame_Y = 200; // "Новая Игра"
 int TableRecords_Size = 50, TableRecords_X = 100,
     TableRecords_Y = 300; //  "Таблица Рекордов"
@@ -55,7 +56,7 @@ struct RecordsTable {
     {
         // Открываем или создаем файл "records.txt"
         std::ofstream file;
-        file.open("records.txt");
+        file.open("../data/records.txt");
         // Записываем в него все рекорды
         for (int i = 0; i < records.size(); i++) {
             if ((records[i].turns) == "0")
@@ -71,7 +72,7 @@ struct RecordsTable {
     {
         // Открывает файл "records.txt"
         std::ifstream file;
-        file.open("records.txt");
+        file.open("../data/records.txt");
         if (!file.is_open())
             return 1;
         // Записывает данные из файла в структуру
@@ -332,40 +333,48 @@ int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background)
     }
 }
 // Перемещает тайл с с нижнего мест на пустое
-void Up(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex)
+bool Up(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex)
 {
     if (Zeroindex.y != size - 1) {
         grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x, Zeroindex.y + 1);
         Zeroindex.y++;
         count++;
+        return true;
     }
+    return false;
 }
 // с верхнего
-void Down(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex)
+bool Down(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex)
 {
     if (Zeroindex.y != 0) {
         grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x, Zeroindex.y - 1);
         Zeroindex.y--;
         count++;
+        return true;
     }
+    return false;
 }
 // с правого
-void Left(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex)
+bool Left(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex)
 {
     if (Zeroindex.x != size - 1) {
         grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x + 1, Zeroindex.y);
         Zeroindex.x++;
         count++;
+        return true;
     }
+    return false;
 }
 // с левого
-void Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex)
+bool Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex)
 {
     if (Zeroindex.x != 0) {
         grid.swapBlocks(Zeroindex.x, Zeroindex.y, Zeroindex.x - 1, Zeroindex.y);
         Zeroindex.x--;
         count++;
+        return true;
     }
+    return false;
 }
 // Инициализация Пятнашек
 int Game(
@@ -438,7 +447,7 @@ int Game(
 // Вывод Таблицу рекордов из файла
 void PrintRecord(sf::RenderWindow& window, sf::Font font)
 {
-    std::ifstream file("records.txt");
+    std::ifstream file("../data/records.txt");
     std::string content;
     bool isRec = true;
     content += "Name Turns Score Difficulty\n";
