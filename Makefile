@@ -41,12 +41,35 @@ DEPS = $(APP_OBJECTS:.o=.h) $(LIB_OBJECTS:.o=.h) $(GRAPH_OBJECTS:.o=.h)
 
 
 all: $(BIN_DIR)
-	$(CC) $(I)$(SFML_DIR)/$(INC) $(C) $(APP_SOURCES) $(O) $(APP_OBJECTS)
-	$(CC) $(APP_OBJECTS) $(O) $(APP_PATH) $(L)$(SFML_DIR)/$(LIB) $(SFMLFALGS)
-.PHONY: clean run test
+	$(CC) $(I)$(SFML_DIR)/$(INC) $(C) $(APP_SOURCES) $(O) $(APP_OBJECTS) $(CPPFLAGS) -I../src/game15_logic/ -I../src/game15_graph/
+	$(CC) $(APP_OBJECTS) $(LOGIC_PATH) $(GRAPH_PATH) $(O) $(APP_PATH) $(L)$(SFML_DIR)/$(LIB) $(SFMLFALGS)
+
+$(LOGIC_PATH): $(LOGIC_OBJECTS)
+	ar rcs $(LOGIC_PATH) $(LOGIC_OBJECTS)
+
+$(GRAPH_PATH): $(GRAPH_OBJECTS)
+	ar rcs $(GRAPH_PATH) $(GRAPH_OBJECTS)
+
+$(TEST_PATH): $(TEST_OBJECTS) $(LOGIC_PATH) $(GRAPH_PATH)
+	$(CC) $(TEST_OBJECTS) $(LOGIC_PATH) $(GRAPH_PATH) $(O) $(TEST_PATH)
+
+$(BIN_DIR):
+	mkdir $(BIN_DIR)
+
+$(OBJ_DIR)/$(SRC_DIR)/$(APP_NAME)/%.o: $(SRC_DIR)/$(APP_NAME)/%.$(SRC_EXT) $(DEPS)
+	$(CC) $(I)$(SFML_DIR)/$(INC) $(C) -c $< -o $@ $(CPPFLAGS) -I../src/game15_logic/ -I../src/game15_graph/
+
+$(OBJ_DIR)/$(SRC_DIR)/$(LOGIC_NAME)/%.o: $(SRC_DIR)/$(LOGIC_NAME)/%.$(SRC_EXT) $(DEPS)
+	$(CC) $(C) -c $< -o $@ $(CPPFLAGS)
+
+$(OBJ_DIR)/$(SRC_DIR)/$(GRAPH_NAME)/%.o: $(SRC_DIR)/$(GRAPH_NAME)/%.$(SRC_EXT) $(DEPS)
+	$(CC) $(C) -c $< -o $@ $(CPPFLAGS)
 
 run:
 	./$(BIN_DIR)/$(APP_NAME)
+
+test: $(TEST_PATH)
+	./$(TEST_PATH)
 
 clean:
 	$(RM) $(OBJ_DIR)/*/*/*.o
