@@ -6,38 +6,80 @@
 #include <string>
 #include <windows.h>
 
-#include "../src/game15_logic/game15_logic.hpp"
+#include "game15_logic.hpp"
+struct Record {
+    std::string name;  // Имя игрока
+    std::string score; // Счет игрока
+    std::string turns; // Потраченное количество ходов
+    std::string difficly; // Сложность игры
+};
 
-const char* IMAGE
-        = "../external/images/image.jpg"; // Путь к картинке заднего фона
-const char* FONT = "../external/images/PakenhamBl_Italic.ttf"; // Путь к шрифту
-const char* YOUWIN = "../external/images/YouWinTexture.jpg"; // Путь к текстуре
-                                                             // "Ты Выиграл!"
-int BlockSize = 100; // Размер блока
-int WIGHT = 1800;    // Ширина окна
-int HEIGHT = 900;    // Высота окна
-int NewGame_Size = 50, NewGame_X = 100, NewGame_Y = 200; // "Новая Игра"
-int TableRecords_Size = 50, TableRecords_X = 100,
-    TableRecords_Y = 300; //  "Таблица Рекордов"
-int Exit_Size = 50, Exit_X = 100, Exit_Y = 400;    // "Выход"
-int About_Size = 50, About_X = 100, About_Y = 800; // "О Создателях"
-int Easy_Size = 50, Easy_X = 100, Easy_Y = 200;    // "Легкий"
-int Normal_Size = 50, Normal_X = 100, Normal_Y = 200; // "Средний"
-int Hard_Size = 50, Hard_X = 100, Hard_Y = 200;       // "Тяжелый"
-int Field_Size = 50, Field_X = 100, Field_Y = 200; // Поле для Ввода
-
-// Выводит сообщение о победе
-void YouWin(sf::RenderWindow& window)
-{
-    sf::Texture YouWinTexture;
-    bool f = YouWinTexture.loadFromFile(YOUWIN);
-    sf::Sprite YouWin(YouWinTexture);
-    YouWin.setScale(3.0f, 3.0f);
-    YouWin.setPosition(WIGHT / 2 - 300, HEIGHT / 2 - 300);
-    window.draw(YouWin);
-    window.display();
-    Sleep(1500);
-}
+// Все сохраненные рекорды
+struct RecordsTable {
+    std::vector<Record> records;
+    // Метод создания новой записи
+    void addRecord(Record record)
+    {
+        records.push_back(record);
+        Record temp;
+        // Сортируем результаты по счету
+        for (int i = 0; i < records.size(); i++)
+            for (int j = i + 1; j < records.size(); j++)
+                if (records[i].score < records[j].score) {
+                    temp = records[i];
+                    records[i] = records[j];
+                    records[j] = temp;
+                }
+        // Если количество результатов больше 10 - то удаляем последний
+        if (records.size() > 10)
+            records.pop_back();
+    }
+    // Сохранение таблицы в файле
+    void saveTableToFile()
+    {
+        // Открываем или создаем файл "records.txt"
+        std::ofstream file;
+        file.open("../data/records.txt");
+        // Записываем в него все рекорды
+        for (int i = 0; i < records.size(); i++) {
+            if ((records[i].turns) == "0")
+                continue;
+            file << records[i].name << "/" << records[i].turns << "/"
+                 << records[i].score << "/" << records[i].difficly << std::endl;
+        }
+        // Закрываем файл
+        file.close();
+    }
+    // Загрузка таблицы из файла
+    int loadTableFromFile()
+    {
+        // Открывает файл "records.txt"
+        std::ifstream file;
+        file.open("../data/records.txt");
+        if (!file.is_open())
+            return 1;
+        // Записывает данные из файла в структуру
+        std::string line;
+        while (getline(file, line)) {
+            Record record;
+            size_t pos = 0;
+            pos = line.find("/");
+            record.name = line.substr(0, pos);
+            line.erase(0, pos + 1);
+            pos = line.find("/");
+            record.turns = line.substr(0, pos);
+            line.erase(0, pos + 1);
+            pos = line.find("/");
+            record.score = line.substr(0, pos);
+            line.erase(0, pos + 1);
+            record.difficly = line;
+            addRecord(record);
+        }
+        // Закрытие файла
+        file.close();
+        return 0;
+    }
+};
 // Возвращает значение сложности полученное от игрока
 int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background)
 {
@@ -103,12 +145,11 @@ void DrawRecords(
         ;
 }
 // Инициализация главного меню
-int MainMenu(
-        sf::RenderWindow& window,
-        sf::Sprite background,
-        sf::Font font,
-        RecordsTable Table)
+int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
 {
+    RecordsTable Table;
+    if (Table.loadTableFromFile())
+        return 1;
     sf::Text NewGame("New Game", font, NewGame_Size);
     NewGame.setPosition(NewGame_X, NewGame_Y);
 

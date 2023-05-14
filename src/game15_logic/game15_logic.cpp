@@ -6,8 +6,6 @@
 #include <string>
 #include <windows.h>
 
-#include "../src/game15_graph/game15_graph.hpp"
-
 const char* IMAGE
         = "../external/images/image.jpg"; // Путь к картинке заднего фона
 const char* FONT = "../external/images/PakenhamBl_Italic.ttf"; // Путь к шрифту
@@ -25,80 +23,17 @@ int Easy_Size = 50, Easy_X = 100, Easy_Y = 200;    // "Легкий"
 int Normal_Size = 50, Normal_X = 100, Normal_Y = 200; // "Средний"
 int Hard_Size = 50, Hard_X = 100, Hard_Y = 200;       // "Тяжелый"
 int Field_Size = 50, Field_X = 100, Field_Y = 200; // Поле для Ввода
-
-struct Record {
-    std::string name;  // Имя игрока
-    std::string score; // Счет игрока
-    std::string turns; // Потраченное количество ходов
-    std::string difficly; // Сложность игры
-};
-// Все сохраненные рекорды
-struct RecordsTable {
-    std::vector<Record> records;
-    // Метод создания новой записи
-    void addRecord(Record record)
-    {
-        records.push_back(record);
-        Record temp;
-        // Сортируем результаты по счету
-        for (int i = 0; i < records.size(); i++)
-            for (int j = i + 1; j < records.size(); j++)
-                if (records[i].score < records[j].score) {
-                    temp = records[i];
-                    records[i] = records[j];
-                    records[j] = temp;
-                }
-        // Если количество результатов больше 10 - то удаляем последний
-        if (records.size() > 10)
-            records.pop_back();
-    }
-    // Сохранение таблицы в файле
-    void saveTableToFile()
-    {
-        // Открываем или создаем файл "records.txt"
-        std::ofstream file;
-        file.open("../data/records.txt");
-        // Записываем в него все рекорды
-        for (int i = 0; i < records.size(); i++) {
-            if ((records[i].turns) == "0")
-                continue;
-            file << records[i].name << "/" << records[i].turns << "/"
-                 << records[i].score << "/" << records[i].difficly << std::endl;
-        }
-        // Закрываем файл
-        file.close();
-    }
-    // Загрузка таблицы из файла
-    int loadTableFromFile()
-    {
-        // Открывает файл "records.txt"
-        std::ifstream file;
-        file.open("../data/records.txt");
-        if (!file.is_open())
-            return 1;
-        // Записывает данные из файла в структуру
-        std::string line;
-        while (getline(file, line)) {
-            Record record;
-            size_t pos = 0;
-            pos = line.find("/");
-            record.name = line.substr(0, pos);
-            line.erase(0, pos + 1);
-            pos = line.find("/");
-            record.turns = line.substr(0, pos);
-            line.erase(0, pos + 1);
-            pos = line.find("/");
-            record.score = line.substr(0, pos);
-            line.erase(0, pos + 1);
-            record.difficly = line;
-            addRecord(record);
-        }
-        // Закрытие файла
-        file.close();
-        return 0;
-    }
-};
-
+void YouWin(sf::RenderWindow& window)
+{
+    sf::Texture YouWinTexture;
+    bool f = YouWinTexture.loadFromFile(YOUWIN);
+    sf::Sprite YouWin(YouWinTexture);
+    YouWin.setScale(3.0f, 3.0f);
+    YouWin.setPosition(WIGHT / 2 - 300, HEIGHT / 2 - 300);
+    window.draw(YouWin);
+    window.display();
+    Sleep(1500);
+}
 class Grid {
 private:
     int** right_index_blocks_; // Массив с верным расположением индексов блоков
@@ -210,7 +145,8 @@ public:
 };
 
 // Просит игрока ввести имя и возвращает его
-std::string EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
+std::string
+EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
 {
     sf::RectangleShape Field;
     Field.setFillColor(sf::Color::Black);

@@ -17,30 +17,29 @@ public:
     void Draw(sf::RenderWindow& window);
     void swapBlocks(int x1, int y1, int x2, int y2);
 };
-struct Record {
-    std::string name;
-    std::string score;
-    std::string turns;
-    std::string difficly;
-};
-
-struct RecordsTable {
-public:
-    RecordsTable();
-    void addRecord(const Record& record);
-    void saveTableToFile() const;
-    int loadTableFromFile();
-    const std::vector<Record>& getRecords() const;
-
-private:
-    std::vector<Record> records;
-};
 
 bool Up(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex);
 bool Down(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex);
 bool Left(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex);
 bool Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex);
+extern const char* IMAGE; // Путь к картинке заднего фона
+extern const char* FONT; // Путь к шрифту
+extern const char* YOUWIN; // Путь к текстуре "Ты Выиграл!"
 
+extern int BlockSize; // Размер блока
+extern int WIGHT; // Ширина окна
+extern int HEIGHT; // Высота окна
+
+extern int NewGame_Size, NewGame_X, NewGame_Y; // "Новая Игра"
+extern int TableRecords_Size, TableRecords_X, TableRecords_Y; // "Таблица Рекордов"
+extern int Exit_Size, Exit_X, Exit_Y; // "Выход"
+extern int About_Size, About_X, About_Y; // "О Создателях"
+
+extern int Easy_Size, Easy_X, Easy_Y; // "Легкий"
+extern int Normal_Size, Normal_X, Normal_Y; // "Средний"
+extern int Hard_Size, Hard_X, Hard_Y; // "Тяжелый"
+
+extern int Field_Size, Field_X, Field_Y; // Поле для Ввода
 int Game(
         std::string name,
         int n,
@@ -54,4 +53,5 @@ int Game(
 void PrintRecord(sf::RenderWindow& window, sf::Font font);
 void YouWin(sf::RenderWindow& window);
 
-std::string EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font);
+std::string
+EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font);
