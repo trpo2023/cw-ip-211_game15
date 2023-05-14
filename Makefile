@@ -1,5 +1,5 @@
 CPP = g++
-CFLAGS = -Wall -MP -MMD -Werror
+CFLAGS = -MP -MMD
 SFMLFALGS = -lsfml-graphics -lsfml-window -lsfml-system
 RM = rm -r
 
@@ -32,7 +32,7 @@ GRAPH_HPP = $(SRC_DIR)/$(APP_NAME)/$(GRAPH_NAME).$(HPP_EXT)
 GRAPH_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(GRAPH_NAME)/$(GRAPH_NAME).o
 
 all: $(LOGIC_OBJECTS) $(GRAPH_OBJECTS)
-	g++ -I$(SFML_DIR)/include $(CFLAGS) $(LOGIC_OBJECTS) $(GRAPH_OBJECTS) $(APP_SOURCES) -L$(SFML_DIR)/lib $(SFMLFALGS) -o $(BIN_DIR)/$(APP_NAME)
+	g++ -I$(SFML_DIR)/include $(LOGIC_OBJECTS) $(GRAPH_OBJECTS) $(APP_SOURCES) -L$(SFML_DIR)/lib $(SFMLFALGS) -o $(BIN_DIR)/$(APP_NAME)
 
 $(LOGIC_OBJECTS): $(LOGIC_SOURCES) $(LOGIC_HPP)
 	g++ -I$(SFML_DIR)/include $(CFLAGS) -c $(LOGIC_SOURCES) -o $(LOGIC_OBJECTS)
@@ -46,6 +46,5 @@ run:
 
 clean:
 	$(RM) $(OBJ_DIR)/*/*/*.o
-	$(RM) $(OBJ_DIR)/*/*/*.a
-	$(RM) $(OBJ_DIR)/*/*/*.d
+	$(RM) $(OBJ_DIR)/*/*/*.d 
 	$(RM) $(BIN_DIR)/*.exe
