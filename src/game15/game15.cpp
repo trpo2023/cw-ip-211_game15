@@ -6,8 +6,8 @@
 #include <string>
 #include <windows.h>
 
-#include "../src/game15_graph/game15_graph.hpp"
-#include "../src/game15_logic/game15_logic.hpp"
+#include "game15_graph.hpp"
+#include "game15_logic.hpp"
 
 int main()
 {

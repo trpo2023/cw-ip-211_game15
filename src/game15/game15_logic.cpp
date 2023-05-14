@@ -26,7 +26,7 @@ int Field_Size = 50, Field_X = 100, Field_Y = 200; // Поле для Ввода
 void YouWin(sf::RenderWindow& window)
 {
     sf::Texture YouWinTexture;
-    bool f = YouWinTexture.loadFromFile(YOUWIN);
+    YouWinTexture.loadFromFile(YOUWIN);
     sf::Sprite YouWin(YouWinTexture);
     YouWin.setScale(3.0f, 3.0f);
     YouWin.setPosition(WIGHT / 2 - 300, HEIGHT / 2 - 300);
@@ -267,8 +267,6 @@ int Game(
     int count = 0;
     int randcount = 0;
     sf::Vector2f ZeroIndex(0, 0);
-    char key;
-    bool Pressed = false;
     sf::Event event;
     Grid grid(n, blockSize, Vx, Vy, font);
     srand(time(0));
