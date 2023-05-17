@@ -1,4 +1,4 @@
-obj/src/game15_graph/game15_graph.o: src/game15/game15_graph.cpp \
+obj/src/game15_graph/game15_graph.o: src/game15_graph/game15_graph.cpp \
  external/SFML/include/SFML/Graphics.hpp \
  external/SFML/include/SFML/Window.hpp \
  external/SFML/include/SFML/System.hpp \
@@ -73,7 +73,7 @@ obj/src/game15_graph/game15_graph.o: src/game15/game15_graph.cpp \
  external/SFML/include/SFML/Graphics/Sprite.hpp \
  external/SFML/include/SFML/Graphics/Text.hpp \
  external/SFML/include/SFML/Graphics/VertexBuffer.hpp \
- src/game15/game15_logic.hpp
+ src/game15_graph/../game15_logic/game15_logic.h
 
 external/SFML/include/SFML/Graphics.hpp:
 
@@ -223,4 +223,4 @@ external/SFML/include/SFML/Graphics/Text.hpp:
 
 external/SFML/include/SFML/Graphics/VertexBuffer.hpp:
 
-src/game15/game15_logic.hpp:
+src/game15_graph/../game15_logic/game15_logic.h:

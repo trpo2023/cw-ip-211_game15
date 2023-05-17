@@ -51,7 +51,6 @@ int Game(
         sf::RenderWindow& window,
         sf::Sprite background,
         sf::Font font);
-void PrintRecord(sf::RenderWindow& window, sf::Font font);
 void YouWin(sf::RenderWindow& window);
 
 std::string

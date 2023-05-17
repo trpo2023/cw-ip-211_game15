@@ -317,27 +317,3 @@ int Game(
     }
     return count;
 }
-// Вывод Таблицу рекордов из файла
-void PrintRecord(sf::RenderWindow& window, sf::Font font)
-{
-    std::ifstream file("../data/records.txt");
-    std::string content;
-    bool isRec = true;
-    content += "Name Turns Score Difficulty\n";
-    if (file.is_open()) {
-        std::string line;
-        while (getline(file, line)) {
-            content += line + "\n";
-        }
-        file.close();
-    }
-    sf::Text text(content, font, 40);
-    text.setPosition(10, 100);
-
-    if (isRec) {
-        window.draw(text);
-        window.display();
-        while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-            ;
-    }
-}

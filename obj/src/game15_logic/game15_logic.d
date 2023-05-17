@@ -1,4 +1,4 @@
-obj/src/game15_logic/game15_logic.o: src/game15/game15_logic.cpp \
+obj/src/game15_logic/game15_logic.o: src/game15_logic/game15_logic.cpp \
  external/SFML/include/SFML/Graphics.hpp \
  external/SFML/include/SFML/Window.hpp \
  external/SFML/include/SFML/System.hpp \

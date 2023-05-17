@@ -6,7 +6,8 @@
 #include <string>
 #include <windows.h>
 
-#include "game15_logic.hpp"
+#include "../game15_logic/game15_logic.h"
+
 struct Record {
     std::string name;  // Имя игрока
     std::string score; // Счет игрока
@@ -80,6 +81,32 @@ struct RecordsTable {
         return 0;
     }
 };
+
+// Вывод Таблицу рекордов из файла
+void PrintRecord(sf::RenderWindow& window, sf::Font font)
+{
+    std::ifstream file("../data/records.txt");
+    std::string content;
+    bool isRec = true;
+    content += "Name Turns Score Difficulty\n";
+    if (file.is_open()) {
+        std::string line;
+        while (getline(file, line)) {
+            content += line + "\n";
+        }
+        file.close();
+    }
+    sf::Text text(content, font, 40);
+    text.setPosition(10, 100);
+
+    if (isRec) {
+        window.draw(text);
+        window.display();
+        while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            ;
+    }
+}
+
 // Возвращает значение сложности полученное от игрока
 int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background)
 {
@@ -163,7 +190,7 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
     sf::Text About("About", font, About_Size);
     About.setPosition(About_X, About_Y); // Кнопка "О создателях"
 
-    sf::Text about("The Game was created \n by one stogle", font, 50);
+    sf::Text about("The Game was created \n by two stogles", font, 50);
     about.setPosition(500, 400);
 
     int diff;
