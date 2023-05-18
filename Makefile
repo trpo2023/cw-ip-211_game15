@@ -61,7 +61,7 @@ $(CTEST_OBJECTS):
 	g++ $(CFLAGS) -c $(THIRD_DIR) -o $(CTEST_OBJECTS)
 $(TEST_OBJECTS): $(TEST_SOURCES)
 	g++ -I$(SFML_DIR)/include -I$(THIRD_DIR)/ctest.h $(CFLAGS) -c $(TEST_SOURCES) -o $(TEST_OBJECTS)
-
+.IGNORE: clean
 clean:
 	$(RM) $(BIN_DIR)/*.exe
 	$(RM) $(OBJ_DIR)/*/*/*.o
