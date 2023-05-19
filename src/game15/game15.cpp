@@ -10,7 +10,7 @@
 
 #include "../game15_logic/game15_logic.h"
 
-int main()
+int main(int argc, const char** argv)
 {
     sf::Font font;
     sf::Texture backgroundTexture;
@@ -25,6 +25,5 @@ int main()
 
     sf::RenderWindow window(
             sf::VideoMode(WIGHT, HEIGHT), "Game in 15"); // Инициализация окна
-
     MainMenu(window, background, font); // Отрисовка главного меню
 }

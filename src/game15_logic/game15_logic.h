@@ -1,3 +1,4 @@
+#include <SFML/Graphics.hpp>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -38,8 +39,6 @@ extern int Normal_Size, Normal_X, Normal_Y; // "Средний"
 extern int Hard_Size, Hard_X, Hard_Y;       // "Тяжелый"
 
 extern int Field_Size, Field_X, Field_Y;    // Поле для Ввода
-
-void YouWin(sf::RenderWindow& window);
 int Game(
         int size,
         int blocksize,
@@ -48,10 +47,3 @@ int Game(
         sf::RenderWindow& window,
         sf::Sprite background,
         sf::Font font);
-void Draw(
-        Grid grid,
-        sf::RenderWindow& window,
-        sf::Font font,
-        int blocksize,
-        int vx,
-        int vy);
