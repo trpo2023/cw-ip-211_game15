@@ -1,19 +1,19 @@
-name: build
+name: Build
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: push
 
 jobs:
   build:
     runs-on: windows-latest
-    
+
     steps:
       - uses: actions/checkout@v2
-      - name: Build
-        run: |
-          make
+
+      - name: Check codestyle
+        run: git ls-files *.{cpp,h} | xargs clang-format -i --verbose && git diff --exit-code
+
+      - name: Build application
+        run: make
+      
+      - name: Test
+        run: make test
