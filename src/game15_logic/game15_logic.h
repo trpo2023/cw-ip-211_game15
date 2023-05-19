@@ -1,27 +1,24 @@
+#include <fstream>
+#include <string>
+#include <vector>
+
 class Grid {
 private:
-    int** right_index_blocks_;
-    int** index_blocks_;
-    int Vx_;
-    int Vy_;
-    int n_;
-    int blockSize_;
-    sf::Font font_;
-    sf::RectangleShape** blocks_;
-    sf::Text** texts_;
-    sf::Vector2f size_;
+    int** Win_Array;
+    int Zero_Index[2];
 
 public:
-    Grid(int n, int blockSize, int Vx, int Vy, sf::Font font);
-    ~Grid();
-    void Draw(sf::RenderWindow& window);
-    void swapBlocks(int x1, int y1, int x2, int y2);
+    int Count = 0;
+    int Size;
+    int** Current_Array;
+    Grid(int size);
+    bool CheckWin();
+    void Random();
+    int Left();
+    int Right();
+    int Up();
+    int Down();
 };
-
-bool Up(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex);
-bool Down(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex);
-bool Left(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex);
-bool Right(Grid& grid, int& count, int size, sf::Vector2f& Zeroindex);
 extern const char* IMAGE; // Путь к картинке заднего фона
 extern const char* FONT;  // Путь к шрифту
 extern const char* YOUWIN; // Путь к текстуре "Ты Выиграл!"
@@ -41,17 +38,20 @@ extern int Normal_Size, Normal_X, Normal_Y; // "Средний"
 extern int Hard_Size, Hard_X, Hard_Y;       // "Тяжелый"
 
 extern int Field_Size, Field_X, Field_Y;    // Поле для Ввода
+
+void YouWin(sf::RenderWindow& window);
 int Game(
-        std::string name,
-        int n,
-        int blockSize,
-        int Vx,
-        int Vy,
-        int randomaze,
+        int size,
+        int blocksize,
+        int vx,
+        int vy,
         sf::RenderWindow& window,
         sf::Sprite background,
         sf::Font font);
-void YouWin(sf::RenderWindow& window);
-
-std::string
-EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font);
+void Draw(
+        Grid grid,
+        sf::RenderWindow& window,
+        sf::Font font,
+        int blocksize,
+        int vx,
+        int vy);

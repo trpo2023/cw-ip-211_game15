@@ -81,7 +81,6 @@ struct RecordsTable {
         return 0;
     }
 };
-
 // Вывод Таблицу рекордов из файла
 void PrintRecord(sf::RenderWindow& window, sf::Font font)
 {
@@ -171,12 +170,69 @@ void DrawRecords(
     while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
         ;
 }
-// Инициализация главного меню
+std::string
+EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
+{
+    sf::RectangleShape Field;
+    Field.setFillColor(sf::Color::Black);
+    Field.setSize(sf::Vector2f(500, 60));
+    Field.setPosition(625, 405);
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(50);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(660, 400);
+
+    // Кнопка
+    sf::Text EnterTheName;
+    EnterTheName.setFont(font);
+    EnterTheName.setString("Enter The Name");
+    EnterTheName.setFillColor(sf::Color::White);
+    EnterTheName.setPosition(WIGHT / 2 - 200, 100);
+    EnterTheName.setCharacterSize(50);
+
+    std::string input;
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            } else if (event.key.code == sf::Keyboard::Escape)
+                return "0";
+            else if (
+                    event.key.code == sf::Keyboard::Enter
+                    && input.size() > 0) // Enter
+                return input;
+            else if (event.type == sf::Event::TextEntered) {
+                if (event.text.unicode < 128) // check if input is ASCII
+                {
+                    if (event.text.unicode == '\b'
+                        && input.size() > 0) // backspace
+                    {
+                        input.pop_back();
+                    }
+
+                    else if (event.text.unicode != '\b' && input.size() < 20) {
+                        input += static_cast<char>(event.text.unicode);
+                    }
+                    text.setString(input);
+                }
+            }
+        }
+
+        window.draw(background);
+        window.draw(Field);
+        window.draw(text);
+        window.draw(EnterTheName);
+        window.display();
+    }
+
+    return input;
+}
 int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
 {
-    RecordsTable Table;
-    if (Table.loadTableFromFile())
-        return 1;
     sf::Text NewGame("New Game", font, NewGame_Size);
     NewGame.setPosition(NewGame_X, NewGame_Y);
 
@@ -190,7 +246,7 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
     sf::Text About("About", font, About_Size);
     About.setPosition(About_X, About_Y); // Кнопка "О создателях"
 
-    sf::Text about("The Game was created \n by two stogles", font, 50);
+    sf::Text about("The Game was created \n by one stogle", font, 50);
     about.setPosition(500, 400);
 
     int diff;
@@ -199,6 +255,7 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
     bool isMenu = 1;
     int menuNum = 0;
     Record NewRecord;
+    RecordsTable Table;
 
     while (isMenu && window.isOpen()) {
         sf::Event event;
@@ -232,12 +289,10 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
                 if (name == "0")
                     continue;
                 count
-                        = Game(name,
-                               diff,
+                        = Game(diff,
                                BlockSize,
                                (WIGHT / 2) - BlockSize * diff / 2,
                                (HEIGHT / 2) - BlockSize * diff / 2,
-                               1000,
                                window,
                                background,
                                font);
