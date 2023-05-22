@@ -246,7 +246,7 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
     sf::Text About("About", font, About_Size);
     About.setPosition(About_X, About_Y); // Кнопка "О создателях"
 
-    sf::Text about("The Game was created \n by one stogle", font, 50);
+    sf::Text about("The Game was created \n by two stogles", font, 50);
     about.setPosition(500, 400);
 
     int diff;

@@ -16,7 +16,8 @@ struct Record {
     std::string turns; // Потраченное количество ходов
     std::string difficly; // Сложность игры
 };
-
+std::string
+EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font);
 struct RecordsTable {
     std::vector<Record> records;
     // Метод создания новой записи

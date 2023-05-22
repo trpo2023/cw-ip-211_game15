@@ -1,7 +1,3 @@
-#include <SFML/Graphics.hpp>
-#include <fstream>
-#include <string>
-#include <vector>
 
 class Grid {
 private:
