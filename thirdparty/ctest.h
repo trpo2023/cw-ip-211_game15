@@ -512,22 +512,9 @@ void assert_data(
 {
     size_t i;
     if (expsize != realsize) {
-        CTEST_ERR(
-                "%s:%d  expected %" PRIuMAX " bytes, got %" PRIuMAX,
-                caller,
-                line,
-                (uintmax_t)expsize,
-                (uintmax_t)realsize);
     }
     for (i = 0; i < expsize; i++) {
         if (exp[i] != real[i]) {
-            CTEST_ERR(
-                    "%s:%d expected 0x%02x at offset %" PRIuMAX " got 0x%02x",
-                    caller,
-                    line,
-                    exp[i],
-                    (uintmax_t)i,
-                    real[i]);
         }
     }
 }
@@ -551,13 +538,6 @@ void assert_compare(
     int c3 = (real < exp) - (exp < real);
 
     if (!get_compare_result(cmp, c3, c3 == 0)) {
-        CTEST_ERR(
-                "%s:%d  assertion failed, %" PRIdMAX " %s %" PRIdMAX "",
-                caller,
-                line,
-                exp,
-                cmp,
-                real);
     }
 }
 
@@ -571,13 +551,6 @@ void assert_compare_u(
     int c3 = (real < exp) - (exp < real);
 
     if (!get_compare_result(cmp, c3, c3 == 0)) {
-        CTEST_ERR(
-                "%s:%d  assertion failed, %" PRIuMAX " %s %" PRIuMAX,
-                caller,
-                line,
-                exp,
-                cmp,
-                real);
     }
 }
 
@@ -589,13 +562,6 @@ void assert_interval(
         int line)
 {
     if (real < exp1 || real > exp2) {
-        CTEST_ERR(
-                "%s:%d  expected %" PRIdMAX "-%" PRIdMAX ", got %" PRIdMAX,
-                caller,
-                line,
-                exp1,
-                exp2,
-                real);
     }
 }
 

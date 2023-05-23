@@ -47,35 +47,38 @@ TEST_OBJECTS = $(TEST_SOURCE:$(TEST_DIR)/%.$(SRC_EXT)=$(OBJ_DIR)/$(TEST_DIR)/%.o
 .PHONY: main
 
 $(APP_PATH): $(APP_OBJECTS) $(LIB_OBJECTS)
-	g++ -I $(SFML_DIR)/include -o $@ $^ -L $(SFML_DIR)/lib $(SFMLFALGS) 
+	$(CC) -I $(SFML_DIR)/include -o $@ $^ -L $(SFML_DIR)/lib $(SFMLFALGS) 
 
 $(LIB_OBJECTS): $(LOGIC_OBJECTS) $(GRAPH_OBJECTS)
 	ar rcs $@ $^
 
 $(GRAPH_OBJECTS): $(GRAPH_SOURCES)
-	g++ -I $(SFML_DIR)/include -c -o $@ $^
+	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
 
 $(LOGIC_OBJECTS): $(LOGIC_SOURCES)
-	g++ -I $(SFML_DIR)/include -c -o $@ $^
+	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
 
 $(APP_OBJECTS): $(APP_SOURCES)
-	g++ -I $(SFML_DIR)/include -c -o $@ $^
+	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
 
 
 
 
 
-test: $(TEST_PATH)
+test: ./bin/test
 	./$<
 
-$(TEST_PATH): $(TEST_OBJECTS) obj/test/main.o $(LOGIC_STATIC_TEST)
+./bin/test: obj/test/test.o obj/test/main.o $(LOGIC_STATIC_TEST)
 	$(CC) $^ -o $@ -L $(SFML_DIR)/lib $(SFMLFALGS)
 
+obj/test/test.o: test/test.cpp
+	$(CC) -I $(SFML_DIR)/include -c $(CFLAGS) -o $@ $^
+
 obj/test/main.o: test/main.cpp
-	$(CC) -c $(CFLAGS) -o $@ $^
+	$(CC) -c -o $@ $^
 
 $(LOGIC_OBJECTS_TEST): $(LOGIC_SOURCES)
-	g++ -I $(SFML_DIR)/include -c -o $@ $^
+	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
 
 $(LOGIC_STATIC_TEST): $(LOGIC_OBJECTS_TEST)
 	ar rcs $@ $^
@@ -90,6 +93,6 @@ clean:
 	$(RM) $(OBJ_DIR)/*/*/*.a
 	$(RM) $(OBJ_DIR)/*/*.o
 	$(RM) $(OBJ_DIR)/*/*.a
-	$(RM) $(OBJ_DIR)/$(TEST_DIR)/*.a
-	$(RM) $(OBJ_DIR)/$(TEST_DIR)/*.o
+	$(RM) $(OBJ_DIR)/$(TEST_NAME)/*.a
+	$(RM) $(OBJ_DIR)/$(TEST_NAME)/*.o
 
