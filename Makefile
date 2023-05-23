@@ -70,7 +70,6 @@ test: $(TEST_PATH)
 
 $(TEST_PATH): $(TEST_OBJECTS) obj/test/main.o $(LOGIC_STATIC_TEST)
 	$(CC) $^ -o $@ -L $(SFML_DIR)/lib $(SFMLFALGS)
-	./bin/test
 
 obj/test/main.o: test/main.cpp
 	$(CC) -c $(CFLAGS) -o $@ $^
