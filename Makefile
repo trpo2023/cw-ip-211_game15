@@ -15,36 +15,33 @@ TEST_DIR = test
 
 APP_PATH = $(BIN_DIR)/$(APP_NAME)
 TEST_PATH = $(BIN_DIR)/$(TEST_NAME)
-LOGIC_PATH = $(OBJ_DIR)/$(SRC_DIR)/$(LOGIC_NAME)/$(LOGIC_NAME).o
-GRAPH_PATH = $(OBJ_DIR)/$(SRC_DIR)/$(GRAPH_NAME)/$(GRAPH_NAME).o
 
 CPP_EXT = cpp
-H_EXT = h
 
 APP_SOURCES = $(SRC_DIR)/$(APP_NAME)/$(APP_NAME).$(CPP_EXT)
-APP_HPP = $(SRC_DIR)/$(APP_NAME)/$(APP_NAME).$(H_EXT)
 APP_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(APP_NAME)/$(APP_NAME).o
 
 LOGIC_SOURCES = $(SRC_DIR)/$(LOGIC_NAME)/$(LOGIC_NAME).$(CPP_EXT)
-LOGIC_HPP = $(SRC_DIR)/$(LOGIC_NAME)/$(LOGIC_NAME).$(H_EXT)
 LOGIC_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(LOGIC_NAME)/$(LOGIC_NAME).o
 LOGIC_OBJECTS_TEST = $(OBJ_DIR)/$(TEST_DIR)/$(LOGIC_NAME).o
-LOGIC_HPP_OBJECTS = $(OBJ_DIR)/$(TEST_DIR)/logic_h.o
 
 LIB_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(LOGIC_NAME)/lib_game15.a
 LOGIC_STATIC_TEST = $(OBJ_DIR)/$(TEST_DIR)/lib_logic.a
 GRAPH_STATIC = $(OBJ_DIR)/$(SRC_DIR)/$(GRAPH_NAME)/lib_graph.a
 
 GRAPH_SOURCES = $(SRC_DIR)/$(GRAPH_NAME)/$(GRAPH_NAME).$(CPP_EXT)
-GRAPH_HPP = $(SRC_DIR)/$(GRAPH_NAME)/$(GRAPH_NAME).$(H_EXT)
 GRAPH_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(GRAPH_NAME)/$(GRAPH_NAME).o
 
-TEST_SOURCE = $(shell find $(TEST_DIR) -name '*.$(SRC_EXT)')
-TEST_OBJECTS = $(TEST_SOURCE:$(TEST_DIR)/%.$(SRC_EXT)=$(OBJ_DIR)/$(TEST_DIR)/%.o)
+TEST_SOURCE = $(TEST_DIR)/$(TEST_NAME).$(CPP_EXT)
+TEST_OBJECTS = $(OBJ_DIR)/$(TEST_DIR)/$(TEST_NAME).o
 
-.PHONY: main
+#for testing test/main.cpp
+MAIN_SOURCE = $(TEST_DIR)/main.$(CPP_EXT)
+MAIN_OBJECTS = $(OBJ_DIR)/$(TEST_DIR)/main.o
 
-.PHONY: main
+
+
+all:$(APP_PATH)
 
 $(APP_PATH): $(APP_OBJECTS) $(LIB_OBJECTS)
 	$(CC) -I $(SFML_DIR)/include -o $@ $^ -L $(SFML_DIR)/lib $(SFMLFALGS) 
@@ -63,18 +60,16 @@ $(APP_OBJECTS): $(APP_SOURCES)
 
 
 
-
-
-test: ./bin/test
+test: $(TEST_PATH)
 	./$<
 
-./bin/test: obj/test/test.o obj/test/main.o $(LOGIC_STATIC_TEST)
+$(TEST_PATH): $(TEST_OBJECTS) $(MAIN_OBJECTS) $(LOGIC_STATIC_TEST)
 	$(CC) $^ -o $@ -L $(SFML_DIR)/lib $(SFMLFALGS)
 
-obj/test/test.o: test/test.cpp
-	$(CC) -I $(SFML_DIR)/include -c $(CFLAGS) -o $@ $^
+$(TEST_OBJECTS): $(TEST_SOURCE)
+	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
 
-obj/test/main.o: test/main.cpp
+$(MAIN_OBJECTS): $(MAIN_SOURCE)
 	$(CC) -c -o $@ $^
 
 $(LOGIC_OBJECTS_TEST): $(LOGIC_SOURCES)
@@ -85,14 +80,12 @@ $(LOGIC_STATIC_TEST): $(LOGIC_OBJECTS_TEST)
 
 .PHONY: clean
 
-
 .IGNORE: clean
+
 clean:
 	$(RM) $(BIN_DIR)/*.exe
 	$(RM) $(OBJ_DIR)/*/*/*.o
 	$(RM) $(OBJ_DIR)/*/*/*.a
 	$(RM) $(OBJ_DIR)/*/*.o
 	$(RM) $(OBJ_DIR)/*/*.a
-	$(RM) $(OBJ_DIR)/$(TEST_NAME)/*.a
-	$(RM) $(OBJ_DIR)/$(TEST_NAME)/*.o
 

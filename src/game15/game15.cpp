@@ -7,9 +7,7 @@
 #include <windows.h>
 
 #include "../game15_graph/game15_graph.h"
-
 #include "../game15_logic/game15_logic.h"
-
 int main(int argc, const char** argv)
 {
     sf::Font font;
