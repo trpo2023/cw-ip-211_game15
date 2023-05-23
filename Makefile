@@ -1,4 +1,3 @@
-CFLAGS =-MP -MMD
 SFMLFALGS = -lsfml-main -lsfml-graphics -lsfml-window -lsfml-system
 RM = rm -r
 CC = g++
@@ -6,6 +5,7 @@ CC = g++
 APP_NAME = game15
 LOGIC_NAME = game15_logic
 GRAPH_NAME = game15_graph
+TEST_NAME = test
 
 BIN_DIR = bin
 SRC_DIR = src
@@ -17,11 +17,6 @@ APP_PATH = $(BIN_DIR)/$(APP_NAME)
 TEST_PATH = $(BIN_DIR)/$(TEST_NAME)
 LOGIC_PATH = $(OBJ_DIR)/$(SRC_DIR)/$(LOGIC_NAME)/$(LOGIC_NAME).o
 GRAPH_PATH = $(OBJ_DIR)/$(SRC_DIR)/$(GRAPH_NAME)/$(GRAPH_NAME).o
-
-SRC = src/
-TEST = test/
-TEST_OBJ = obj/test/
-
 
 CPP_EXT = cpp
 H_EXT = h
