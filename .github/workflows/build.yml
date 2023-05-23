@@ -4,10 +4,14 @@ on: push
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+      - name: Check codestyle
+        run: git ls-files *.cpp *.h | xargs clang-format -i --verbose && git diff --exit-code
+  build:
+    runs-on: windows-latest
       - name: Build application
         run: make
       - name: Test application
