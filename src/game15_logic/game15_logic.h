@@ -1,3 +1,4 @@
+#include <SFML/Graphics.hpp>
 
 class Grid {
 private:
@@ -16,6 +17,7 @@ public:
     int Up();
     int Down();
 };
+
 extern const char* IMAGE; // Путь к картинке заднего фона
 extern const char* FONT;  // Путь к шрифту
 extern const char* YOUWIN; // Путь к текстуре "Ты Выиграл!"

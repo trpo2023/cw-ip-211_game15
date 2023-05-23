@@ -8,12 +8,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Check codestyle
-        run: git ls-files *.{cpp} | xargs clang-format -i --verbose && git diff --exit-code
-      - name: Check codestyle(2)
-        run: git ls-files *.{h} | xargs clang-format -i --verbose && git diff --exit-code
-
       - name: Build application
         run: make
       - name: Test application

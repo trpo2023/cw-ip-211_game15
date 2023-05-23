@@ -10,20 +10,5 @@ void DrawRecords(
 int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font);
 void PrintRecord(sf::RenderWindow& window, sf::Font font);
 
-struct Record {
-    std::string name;  // Имя игрока
-    std::string score; // Счет игрока
-    std::string turns; // Потраченное количество ходов
-    std::string difficly; // Сложность игры
-};
 std::string
 EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font);
-struct RecordsTable {
-    std::vector<Record> records;
-    // Метод создания новой записи
-    void addRecord(Record record);
-    // Сохранение таблицы в файле
-    void saveTableToFile();
-    // Загрузка таблицы из файла
-    int loadTableFromFile();
-};
