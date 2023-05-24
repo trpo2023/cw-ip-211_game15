@@ -1,23 +1,22 @@
 #include <SFML/Graphics.hpp>
 
-class Grid {
-private:
-    int** Win_Array;
-    int Zero_Index[2];
-
+class Record {
 public:
-    int Count = 0;
-    int Size;
-    int** Current_Array;
-    Grid(int size);
-    bool CheckWin();
-    void Random();
-    int Left();
-    int Right();
-    int Up();
-    int Down();
+    std::string name;  // Имя игрока
+    std::string score; // Счет игрока
+    std::string turns; // Потраченное количество ходов
+    std::string difficly; // Сложность игры
 };
 
+class RecordsTable {
+private:
+    std::vector<Record> records;
+
+public:
+    void addRecord(Record record);
+    void saveTableToFile();
+    int loadTableFromFile();
+};
 extern int BlockSize;                          // Размер блока
 extern int WIGHT;                              // Ширина окна
 extern int HEIGHT;                             // Высота окна

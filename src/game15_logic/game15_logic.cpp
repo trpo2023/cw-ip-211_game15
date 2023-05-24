@@ -1,3 +1,4 @@
+#include "../game15_logic/game15_logic.h"
 #include <SFML/Graphics.hpp>
 #include <ctime>
 #include <fstream>
@@ -137,6 +138,69 @@ public:
         return 1;
     }
 };
+
+void RecordsTable::addRecord(Record record)
+{
+    records.push_back(record);
+    Record temp;
+    // Сортируем результаты по счету
+    for (int i = 0; i < records.size(); i++)
+        for (int j = i + 1; j < records.size(); j++)
+            if (records[i].score < records[j].score) {
+                temp = records[i];
+                records[i] = records[j];
+                records[j] = temp;
+            }
+    // Если количество результатов больше 10 - то удаляем последний
+    if (records.size() > 10)
+        records.pop_back();
+}
+// Сохранение таблицы в файле
+void RecordsTable::saveTableToFile()
+{
+    // Открываем или создаем файл "records.txt"
+    std::ofstream file;
+    file.open("../data/records.txt");
+    // Записываем в него все рекорды
+    for (int i = 0; i < records.size(); i++) {
+        if ((records[i].turns) == "0")
+            continue;
+        file << records[i].name << "/" << records[i].turns << "/"
+             << records[i].score << "/" << records[i].difficly << std::endl;
+    }
+    // Закрываем файл
+    file.close();
+}
+// Загрузка таблицы из файла
+int RecordsTable::loadTableFromFile()
+{
+    // Открывает файл "records.txt"
+    std::ifstream file;
+    file.open("../data/records.txt");
+    if (!file.is_open())
+        return 1;
+    // Записывает данные из файла в структуру
+    std::string line;
+    while (getline(file, line)) {
+        Record record;
+        size_t pos = 0;
+        pos = line.find("/");
+        record.name = line.substr(0, pos);
+        line.erase(0, pos + 1);
+        pos = line.find("/");
+        record.turns = line.substr(0, pos);
+        line.erase(0, pos + 1);
+        pos = line.find("/");
+        record.score = line.substr(0, pos);
+        line.erase(0, pos + 1);
+        record.difficly = line;
+        addRecord(record);
+    }
+    // Закрытие файла
+    file.close();
+    return 0;
+}
+
 void Draw(
         Grid grid,
         sf::RenderWindow& window,
