@@ -1,5 +1,22 @@
 #include <SFML/Graphics.hpp>
 
+class Grid {
+private:
+    int** Win_Array;
+    int Zero_Index[2];
+
+public:
+    int Count = 0;
+    int Size;
+    int** Current_Array;
+    Grid(int size);
+    bool CheckWin();
+    void Random();
+    int Left();
+    int Right();
+    int Up();
+    int Down();
+};
 class Record {
 public:
     std::string name;  // Имя игрока
@@ -17,13 +34,3 @@ public:
     void saveTableToFile();
     int loadTableFromFile();
 };
-
-int Game(
-        int size,
-        int blocksize,
-        int vx,
-        int vy,
-        sf::RenderWindow& window,
-        sf::Sprite background,
-        sf::Font font,
-        bool& win);

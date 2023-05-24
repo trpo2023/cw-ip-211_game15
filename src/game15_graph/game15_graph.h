@@ -22,3 +22,12 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font);
 void PrintRecord(sf::RenderWindow& window, sf::Font font);
 std::string
 EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font);
+int Game(
+        int size,
+        int blocksize,
+        int vx,
+        int vy,
+        sf::RenderWindow& window,
+        sf::Sprite background,
+        sf::Font font,
+        bool& win);
