@@ -1,3 +1,4 @@
+extern const char* YOUWIN; // Путь к текстуре
 int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background);
 void DrawRecords(
         sf::RenderWindow& window,

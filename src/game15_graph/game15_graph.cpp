@@ -9,6 +9,20 @@
 
 #include "../game15_logic/game15_logic.h"
 
+const char* YOUWIN = "../external/images/YouWinTexture.jpg"; // Путь к текстуре
+
+void YouWin(sf::RenderWindow& window)
+{
+    sf::Texture YouWinTexture;
+    YouWinTexture.loadFromFile(YOUWIN);
+    sf::Sprite YouWin(YouWinTexture);
+    YouWin.setScale(3.0f, 3.0f);
+    YouWin.setPosition(WIGHT / 2 - 300, HEIGHT / 2 - 300);
+    window.draw(YouWin);
+    window.display();
+    Sleep(1500);
+}
+
 struct Record {
     std::string name;  // Имя игрока
     std::string score; // Счет игрока
@@ -283,6 +297,7 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             if (menuNum == 1) {
+                bool win = false;
                 diff = Difficulty(window, font, background);
                 if (diff == 0)
                     continue;
@@ -296,7 +311,10 @@ int MainMenu(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
                                (HEIGHT / 2) - BlockSize * diff / 2,
                                window,
                                background,
-                               font);
+                               font,
+                               win);
+                if (win)
+                    YouWin(window);
                 NewRecord.name = name;
                 NewRecord.score
                         = std::to_string(diff * diff * 500 - count * 10);

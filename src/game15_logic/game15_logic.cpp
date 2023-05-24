@@ -6,11 +6,7 @@
 #include <string>
 #include <windows.h>
 
-const char* IMAGE
-        = "../external/images/image.jpg"; // Путь к картинке заднего фона
-const char* FONT = "../external/images/PakenhamBl_Italic.ttf"; // Путь к шрифту
-const char* YOUWIN = "../external/images/YouWinTexture.jpg"; // Путь к текстуре
-                                                             // "Ты Выиграл!"
+// "Ты Выиграл!"
 int BlockSize = 100; // Размер блока
 int WIGHT = 1800;    // Ширина окна
 int HEIGHT = 900;    // Высота окна
@@ -180,17 +176,7 @@ void Draw(
         }
 }
 // Просит игрока ввести имя и возвращает его
-void YouWin(sf::RenderWindow& window)
-{
-    sf::Texture YouWinTexture;
-    YouWinTexture.loadFromFile(YOUWIN);
-    sf::Sprite YouWin(YouWinTexture);
-    YouWin.setScale(3.0f, 3.0f);
-    YouWin.setPosition(WIGHT / 2 - 300, HEIGHT / 2 - 300);
-    window.draw(YouWin);
-    window.display();
-    Sleep(1500);
-}
+
 // Инициализация Пятнашек
 int Game(
         int size,
@@ -199,14 +185,15 @@ int Game(
         int vy,
         sf::RenderWindow& window,
         sf::Sprite background,
-        sf::Font font)
+        sf::Font font,
+        bool& win)
 {
     sf::Event event;
     Grid grid(size);
     grid.Random();
     while (window.isOpen()) {
         if (grid.CheckWin()) {
-            YouWin(window);
+            win = true;
             break;
         }
         while (window.pollEvent(event)) {

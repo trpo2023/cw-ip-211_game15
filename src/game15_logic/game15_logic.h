@@ -18,12 +18,9 @@ public:
     int Down();
 };
 
-extern const char* IMAGE; // Путь к картинке заднего фона
-extern const char* FONT;  // Путь к шрифту
-extern const char* YOUWIN; // Путь к текстуре "Ты Выиграл!"
-extern int BlockSize;      // Размер блока
-extern int WIGHT;          // Ширина окна
-extern int HEIGHT;         // Высота окна
+extern int BlockSize;                          // Размер блока
+extern int WIGHT;                              // Ширина окна
+extern int HEIGHT;                             // Высота окна
 extern int NewGame_Size, NewGame_X, NewGame_Y; // "Новая Игра"
 extern int TableRecords_Size, TableRecords_X,
         TableRecords_Y;                     // "Таблица Рекордов"
@@ -40,4 +37,5 @@ int Game(
         int vy,
         sf::RenderWindow& window,
         sf::Sprite background,
-        sf::Font font);
+        sf::Font font,
+        bool& win);

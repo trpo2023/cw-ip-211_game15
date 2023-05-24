@@ -9,6 +9,11 @@
 
 #include "../game15_graph/game15_graph.h"
 #include "../game15_logic/game15_logic.h"
+
+const char* IMAGE
+        = "../external/images/image.jpg"; // Путь к картинке заднего фона
+const char* FONT = "../external/images/PakenhamBl_Italic.ttf"; // Путь к шрифту
+
 int main(int argc, const char** argv)
 {
     sf::Font font;
