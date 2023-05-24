@@ -8,18 +8,7 @@
 #include <windows.h>
 
 // "Ты Выиграл!"
-int BlockSize = 100; // Размер блока
-int WIGHT = 1800;    // Ширина окна
-int HEIGHT = 900;    // Высота окна
-int NewGame_Size = 50, NewGame_X = 100, NewGame_Y = 200; // "Новая Игра"
-int TableRecords_Size = 50, TableRecords_X = 100,
-    TableRecords_Y = 300; //  "Таблица Рекордов"
-int Exit_Size = 50, Exit_X = 100, Exit_Y = 400;    // "Выход"
-int About_Size = 50, About_X = 100, About_Y = 800; // "О Создателях"
-int Easy_Size = 50, Easy_X = 100, Easy_Y = 200;    // "Легкий"
-int Normal_Size = 50, Normal_X = 100, Normal_Y = 200; // "Средний"
-int Hard_Size = 50, Hard_X = 100, Hard_Y = 200;       // "Тяжелый"
-int Field_Size = 50, Field_X = 100, Field_Y = 200; // Поле для Ввода
+
 class Grid {
 private:
     int** Win_Array;
