@@ -32,37 +32,21 @@ void Draw(
         int vx,
         int vy)
 {
-    sf::RectangleShape** blocks = new sf::RectangleShape*[grid.Size];
-    sf::Text** texts = new sf::Text*[grid.Size];
+    sf::Sprite** blocks = new sf::Sprite*[grid.Size];
     for (int i = 0; i < grid.Size; ++i) {
-        blocks[i] = new sf::RectangleShape[grid.Size];
-        texts[i] = new sf::Text[grid.Size];
+        blocks[i] = new sf::Sprite[grid.Size];
         for (int j = 0; j < grid.Size; ++j) {
-            blocks[i][j].setSize(sf::Vector2f(blocksize, blocksize));
-            blocks[i][j].setOutlineThickness(1.f);
-            blocks[i][j].setOutlineColor(sf::Color::Black);
-            if (grid.Current_Array[i][j] == 0)
-                blocks[i][j].setFillColor(sf::Color::Black);
-            else
-                blocks[i][j].setFillColor(sf::Color::White);
-            sf::Vector2f pos(i * blocksize, j * blocksize);
-            texts[i][j].setFont(font);
-            texts[i][j].setString(std::to_string(grid.Current_Array[i][j]));
-            texts[i][j].setCharacterSize(70);
-            texts[i][j].setPosition(
-                    (float)(vx + pos.x + 2.f), (float)(vy + pos.y + 2.f));
-            texts[i][j].setFillColor(sf::Color::Black);
+            sf::Texture image;
+            std::string path = "../external/images/" + std::to_string(grid.Size)
+                    + "x" + std::to_string(grid.Size) + "/"
+                    + std::to_string(grid.Current_Array[i][j]) + ".png";
+            image.loadFromFile(path);
+            blocks[i][j].setTexture(image);
+            blocks[i][j].setPosition(vx + i * blocksize, vy + j * blocksize);
+            window.draw(blocks[i][j]);
         }
     }
-    for (int i = 0; i < grid.Size; ++i)
-        for (int j = 0; j < grid.Size; ++j) {
-            sf::Vector2f pos(vx + i * blocksize, vy + j * blocksize);
-            blocks[i][j].setPosition(pos);
-            window.draw(blocks[i][j]);
-            window.draw(texts[i][j]);
-        }
 }
-// Просит игрока ввести имя и возвращает его
 
 // Инициализация Пятнашек
 int Game(
@@ -79,10 +63,6 @@ int Game(
     Grid grid(size);
     grid.Random();
     while (window.isOpen()) {
-        if (grid.CheckWin()) {
-            win = true;
-            break;
-        }
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
@@ -103,6 +83,13 @@ int Game(
             Draw(grid, window, font, blocksize, vx, vy);
             window.display();
         }
+        if (grid.CheckWin()) {
+            win = true;
+            window.draw(background);
+            Draw(grid, window, font, blocksize, vx, vy);
+            window.display();
+            break;
+        }
     }
     return grid.Count;
 }
@@ -111,12 +98,13 @@ void YouWin(sf::RenderWindow& window)
 {
     sf::Texture YouWinTexture;
     YouWinTexture.loadFromFile(YOUWIN);
-    sf::Sprite YouWin(YouWinTexture);
-    YouWin.setScale(3.0f, 3.0f);
-    YouWin.setPosition(WIGHT / 2 - 300, HEIGHT / 2 - 300);
+    sf::Sprite YouWin;
+    YouWin.setTexture(YouWinTexture);
+    YouWin.setScale(2.0f, 2.0f);
+    YouWin.setPosition(WIGHT / 2 - 200, 0);
     window.draw(YouWin);
     window.display();
-    Sleep(1500);
+    Sleep(1000);
 }
 
 // Вывод Таблицу рекордов из файла
