@@ -107,6 +107,7 @@ int main(int argc, const char** argv)
                     NewRecord.difficly = "Normal";
                 if (diff == 4)
                     NewRecord.difficly = "Hard";
+                NewRecord.date = GetCurrentDatetime();
                 Table.addRecord(NewRecord);
                 Table.saveTableToFile();
             }

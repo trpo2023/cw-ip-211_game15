@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 
+std::string GetCurrentDatetime();
+
 class Grid {
 private:
     int** Win_Array;
@@ -23,6 +25,7 @@ public:
     std::string score; // Счет игрока
     std::string turns; // Потраченное количество ходов
     std::string difficly; // Сложность игры
+    std::string date;     // Время установления рекорда
 };
 
 class RecordsTable {

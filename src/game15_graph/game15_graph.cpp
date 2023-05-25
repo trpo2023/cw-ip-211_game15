@@ -125,7 +125,7 @@ void PrintRecord(sf::RenderWindow& window, sf::Font font)
     std::ifstream file("../data/records.txt");
     std::string content;
     bool isRec = true;
-    content += "Name Turns Score Difficulty\n";
+    content += "Name Turns Score Date Difficulty\n";
     if (file.is_open()) {
         std::string line;
         while (getline(file, line)) {

@@ -7,6 +7,20 @@
 #include <string>
 #include <windows.h>
 
+std::string GetCurrentDatetime()
+{
+    time_t current_time;
+    struct tm* timeinfo;
+    char buffer[80];
+
+    time(&current_time);
+    timeinfo = localtime(&current_time);
+
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+    std::string s = buffer;
+    return s;
+}
+
 Grid::Grid(int size)
 {
     Win_Array = new int*[size];
@@ -143,7 +157,8 @@ void RecordsTable::saveTableToFile()
         if ((records[i].turns) == "0")
             continue;
         file << records[i].name << "/" << records[i].turns << "/"
-             << records[i].score << "/" << records[i].difficly << std::endl;
+             << records[i].score << "/" << records[i].date << "/"
+             << records[i].difficly << std::endl;
     }
     // Закрываем файл
     file.close();
@@ -169,6 +184,9 @@ int RecordsTable::loadTableFromFile()
         line.erase(0, pos + 1);
         pos = line.find("/");
         record.score = line.substr(0, pos);
+        line.erase(0, pos + 1);
+        pos = line.find("/");
+        record.date = line.substr(0, pos);
         line.erase(0, pos + 1);
         record.difficly = line;
         addRecord(record);
