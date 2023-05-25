@@ -53,7 +53,7 @@ int main(int argc, const char** argv)
 
     Record NewRecord;
     RecordsTable Table;
-
+    Table.loadTableFromFile();
     while (isMenu && window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
