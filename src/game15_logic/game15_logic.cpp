@@ -1,11 +1,9 @@
 #include "../game15_logic/game15_logic.h"
-#include <SFML/Graphics.hpp>
 #include <ctime>
 #include <fstream>
 #include <iostream>
 #include <random>
 #include <string>
-#include <windows.h>
 
 std::string GetCurrentDatetime()
 {
