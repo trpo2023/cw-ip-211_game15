@@ -4,7 +4,6 @@
 #include <iostream>
 #include <random>
 #include <string>
-#include <windows.h>
 
 std::string GetCurrentDatetime()
 {
