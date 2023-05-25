@@ -64,16 +64,16 @@ test: $(TEST_PATH)
 	./$<
 
 $(TEST_PATH): $(TEST_OBJECTS) $(MAIN_OBJECTS) $(LOGIC_STATIC_TEST)
-	$(CC) $^ -o $@ -L $(SFML_DIR)/lib $(SFMLFALGS)
+	$(CC) $^ -o $@
 
 $(TEST_OBJECTS): $(TEST_SOURCE)
-	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
+	$(CC) -c -o $@ $^
 
 $(MAIN_OBJECTS): $(MAIN_SOURCE)
 	$(CC) -c -o $@ $^
 
 $(LOGIC_OBJECTS_TEST): $(LOGIC_SOURCES)
-	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
+	$(CC) -c -o $@ $^
 
 $(LOGIC_STATIC_TEST): $(LOGIC_OBJECTS_TEST)
 	ar rcs $@ $^

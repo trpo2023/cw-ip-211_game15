@@ -76,3 +76,47 @@ CTEST(GridTestSuite, DownTest)
     // крайней нижней позиции
     ASSERT_EQUAL(grid.Down(), 1);
 }
+
+CTEST(RecordsTableTest, AddRecordTest)
+{
+    RecordsTable table;
+    Record record1 = {"John", "5", "1000", "2022-10-31", "hard"};
+    table.addRecord(record1);
+    ASSERT_EQUAL(table.loadTableFromFile(), 0);
+}
+
+CTEST(RecordsTableTest, SaveTableToFileTest)
+{
+    RecordsTable table;
+    Record record1 = {"John", "5", "1000", "2022-10-31", "hard"};
+    table.addRecord(record1);
+    ASSERT_EQUAL(table.loadTableFromFile(), 0);
+    table.saveTableToFile();
+    ASSERT_EQUAL(table.loadTableFromFile(), 0);
+}
+
+CTEST(RecordsTableTest, LoadTableFromFileTest)
+{
+    RecordsTable table;
+    Record record1 = {"John", "5", "1000", "2022-10-31", "hard"};
+    Record record2 = {"Anna", "7", "800", "2022-11-01", "medium"};
+    table.addRecord(record1);
+    table.addRecord(record2);
+    ASSERT_EQUAL(table.loadTableFromFile(), 0);
+}
+
+CTEST(GetCurrentDatetimeTest, TestResultLength)
+{
+    std::string result = GetCurrentDatetime();
+    ASSERT_EQUAL(result.length(), 19);
+}
+
+CTEST(GetCurrentDatetimeTest, TestStringFormat)
+{
+    std::string result = GetCurrentDatetime();
+    ASSERT_EQUAL(result[4], '-');
+    ASSERT_EQUAL(result[7], '-');
+    ASSERT_EQUAL(result[10], ' ');
+    ASSERT_EQUAL(result[13], ':');
+    ASSERT_EQUAL(result[16], ':');
+}
