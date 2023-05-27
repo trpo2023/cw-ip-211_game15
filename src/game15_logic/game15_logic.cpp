@@ -128,6 +128,18 @@ int Grid::Down()
     return 1;
 }
 
+void ClearFile()
+{
+    std::ofstream file;
+    file.open("../data/records.txt");
+    file << "";
+    file.close();
+}
+void RecordsTable::clean()
+{
+    while (records.size() > 0)
+        records.pop_back();
+}
 void RecordsTable::addRecord(Record record)
 {
     records.push_back(record);

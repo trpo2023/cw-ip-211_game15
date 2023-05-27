@@ -2,6 +2,7 @@
 #include <vector>
 
 std::string GetCurrentDatetime();
+void ClearFile();
 
 class Grid {
 private:
@@ -37,4 +38,5 @@ public:
     void addRecord(Record record);
     void saveTableToFile();
     int loadTableFromFile();
+    void clean();
 };
