@@ -41,19 +41,18 @@ void Draw(
         int vx,
         int vy)
 {
-    sf::Sprite** blocks = new sf::Sprite*[grid.Size];
-    for (int i = 0; i < grid.Size; ++i) {
-        blocks[i] = new sf::Sprite[grid.Size];
-        for (int j = 0; j < grid.Size; ++j) {
-            sf::Texture image;
-            std::string path = "../external/images/" + std::to_string(grid.Size)
-                    + "x" + std::to_string(grid.Size) + "/"
-                    + std::to_string(grid.Current_Array[i][j]) + ".png";
-            image.loadFromFile(path);
-            blocks[i][j].setTexture(image);
-            blocks[i][j].setPosition(vx + i * blocksize, vy + j * blocksize);
-            window.draw(blocks[i][j]);
-        }
+    for (int i = 0; i < grid.Size * grid.Size; ++i) {
+        sf::Sprite block;
+        sf::Texture image;
+        std::string path = "../external/images/" + std::to_string(grid.Size)
+                + "x" + std::to_string(grid.Size) + "/"
+                + std::to_string(grid.Current_Array[i]) + ".png";
+        image.loadFromFile(path);
+        block.setTexture(image);
+        block.setPosition(
+                vx + (i % grid.Size) * blocksize,
+                vy + (i / grid.Size) * blocksize);
+        window.draw(block);
     }
 }
 
