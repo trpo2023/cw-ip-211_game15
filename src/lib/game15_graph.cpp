@@ -184,6 +184,7 @@ int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background)
             }
         }
     }
+    return 0;
 }
 // Отрисовывает таблицу рекордов в главном окне
 int DrawRecords(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
