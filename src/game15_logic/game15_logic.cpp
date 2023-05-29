@@ -21,26 +21,19 @@ std::string GetCurrentDatetime()
 
 Grid::Grid(int size)
 {
-    Win_Array = new int*[size];
-    Current_Array = new int*[size];
-    for (int j = 0; j < size; j++) {
-        Win_Array[j] = new int[size];
-        Current_Array[j] = new int[size];
-        for (int i = 0; i < size; i++) {
-            Win_Array[j][i] = j + (size)*i + 1;
-            Current_Array[j][i] = j + (size)*i + 1;
-        }
+    for (int i = 0; i < size * size; i++) {
+        Win_Array.push_back(i + 1);
+        Current_Array.push_back(i + 1);
     }
-    Win_Array[size - 1][size - 1] = Current_Array[size - 1][size - 1] = 0;
-    Zero_Index[0] = Zero_Index[1] = size - 1;
+    Win_Array[size * size - 1] = Current_Array[size * size - 1] = 0;
+    Zero_Index = size * size - 1;
     Size = size;
 }
 bool Grid::CheckWin()
 {
-    for (int i = 0; i < Size; i++)
-        for (int j = 0; j < Size; j++)
-            if (Win_Array[i][j] != Current_Array[i][j])
-                return false;
+    for (int i = 0; i < Size * Size; i++)
+        if (Win_Array[i] != Current_Array[i])
+            return false;
     return true;
 }
 void Grid::Random()
@@ -71,29 +64,27 @@ void Grid::Random()
         }
     } while (CheckWin());
 }
-int Grid::Left()
+int Grid::Right()
 {
     int temp;
-    if (Zero_Index[0] != Size - 1) {
-        temp = Current_Array[Zero_Index[0] + 1][Zero_Index[1]];
-        Current_Array[Zero_Index[0] + 1][Zero_Index[1]]
-                = Current_Array[Zero_Index[0]][Zero_Index[1]];
-        Current_Array[Zero_Index[0]][Zero_Index[1]] = temp;
-        Zero_Index[0]++;
+    if (Zero_Index % Size != 0) {
+        temp = Current_Array[Zero_Index - 1];
+        Current_Array[Zero_Index - 1] = 0;
+        Current_Array[Zero_Index] = temp;
+        Zero_Index--;
         Count++;
         return 0;
     }
     return 1;
 }
-int Grid::Right()
+int Grid::Left()
 {
     int temp;
-    if (Zero_Index[0] != 0) {
-        temp = Current_Array[Zero_Index[0] - 1][Zero_Index[1]];
-        Current_Array[Zero_Index[0] - 1][Zero_Index[1]]
-                = Current_Array[Zero_Index[0]][Zero_Index[1]];
-        Current_Array[Zero_Index[0]][Zero_Index[1]] = temp;
-        Zero_Index[0]--;
+    if (Zero_Index % Size != Size - 1) {
+        temp = Current_Array[Zero_Index + 1];
+        Current_Array[Zero_Index + 1] = 0;
+        Current_Array[Zero_Index] = temp;
+        Zero_Index++;
         Count++;
         return 0;
     }
@@ -102,12 +93,11 @@ int Grid::Right()
 int Grid::Up()
 {
     int temp;
-    if (Zero_Index[1] != Size - 1) {
-        temp = Current_Array[Zero_Index[0]][Zero_Index[1] + 1];
-        Current_Array[Zero_Index[0]][Zero_Index[1] + 1]
-                = Current_Array[Zero_Index[0]][Zero_Index[1]];
-        Current_Array[Zero_Index[0]][Zero_Index[1]] = temp;
-        Zero_Index[1]++;
+    if (Zero_Index < Size * (Size - 1)) {
+        temp = Current_Array[Zero_Index + Size];
+        Current_Array[Zero_Index + Size] = 0;
+        Current_Array[Zero_Index] = temp;
+        Zero_Index += Size;
         Count++;
         return 0;
     }
@@ -116,18 +106,28 @@ int Grid::Up()
 int Grid::Down()
 {
     int temp;
-    if (Zero_Index[1] != 0) {
-        temp = Current_Array[Zero_Index[0]][Zero_Index[1] - 1];
-        Current_Array[Zero_Index[0]][Zero_Index[1] - 1]
-                = Current_Array[Zero_Index[0]][Zero_Index[1]];
-        Current_Array[Zero_Index[0]][Zero_Index[1]] = temp;
-        Zero_Index[1]--;
+    if (Zero_Index >= Size) {
+        temp = Current_Array[Zero_Index - Size];
+        Current_Array[Zero_Index - Size] = 0;
+        Current_Array[Zero_Index] = temp;
+        Zero_Index -= Size;
         Count++;
         return 0;
     }
     return 1;
 }
-
+void ClearFile()
+{
+    std::ofstream file;
+    file.open("../data/records.txt");
+    file << "";
+    file.close();
+}
+void RecordsTable::clean()
+{
+    while (records.size() > 0)
+        records.pop_back();
+}
 void RecordsTable::addRecord(Record record)
 {
     records.push_back(record);

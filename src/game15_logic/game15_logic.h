@@ -2,16 +2,17 @@
 #include <vector>
 
 std::string GetCurrentDatetime();
+void ClearFile();
 
 class Grid {
 private:
-    int** Win_Array;
-    int Zero_Index[2];
+    std::vector<int> Win_Array;
+    int Zero_Index;
 
 public:
     int Count = 0;
     int Size;
-    int** Current_Array;
+    std::vector<int> Current_Array;
     Grid(int size);
     bool CheckWin();
     void Random();
@@ -37,4 +38,5 @@ public:
     void addRecord(Record record);
     void saveTableToFile();
     int loadTableFromFile();
+    void clean();
 };

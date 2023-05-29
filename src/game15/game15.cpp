@@ -29,21 +29,17 @@ int main(int argc, const char** argv)
 
     sf::RenderWindow window(
             sf::VideoMode(WIGHT, HEIGHT), "Game in 15"); // Инициализация окна
-    sf::Text NewGame("New Game", font, NewGame_Size);
-    NewGame.setPosition(NewGame_X, NewGame_Y);
+    sf::Text NewGame("New Game", font, 50);
+    NewGame.setPosition(100, 200);
 
-    sf::Text TableRecords("Scoreboard", font, TableRecords_Size);
-    TableRecords.setPosition(
-            TableRecords_X, TableRecords_Y); // Кнопка "Таблица рекордов"
+    sf::Text TableRecords("Scoreboard", font, 50);
+    TableRecords.setPosition(100, 300); // Кнопка "Таблица рекордов"
 
-    sf::Text Exit("Exit", font, Exit_Size);
-    Exit.setPosition(Exit_X, Exit_Y); // Кнопка "Выход"
+    sf::Text Exit("Exit", font, 50);
+    Exit.setPosition(100, 400); // Кнопка "Выход"
 
-    sf::Text About("About", font, About_Size);
-    About.setPosition(About_X, About_Y); // Кнопка "О создателях"
-
-    sf::Text about("The Game was created \n by two stogles", font, 50);
-    about.setPosition(500, 400);
+    sf::Text About("About", font, 50);
+    About.setPosition(100, 800); // Кнопка "О создателях"
 
     int diff;
     int count;
@@ -53,7 +49,7 @@ int main(int argc, const char** argv)
 
     Record NewRecord;
     RecordsTable Table;
-
+    Table.loadTableFromFile();
     while (isMenu && window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -88,9 +84,9 @@ int main(int argc, const char** argv)
                     continue;
                 count
                         = Game(diff,
-                               BlockSize,
-                               (WIGHT / 2) - BlockSize * diff / 2,
-                               (HEIGHT / 2) - BlockSize * diff / 2,
+                               100,
+                               (WIGHT / 2) - 100 * diff / 2,
+                               (HEIGHT / 2) - 100 * diff / 2,
                                window,
                                background,
                                font,
@@ -111,21 +107,15 @@ int main(int argc, const char** argv)
                 Table.addRecord(NewRecord);
                 Table.saveTableToFile();
             }
-            if (menuNum == 2) {
-                DrawRecords(window, background, font, about);
-                window.display();
-                while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-                    ;
-            }
+            if (menuNum == 2)
+                if (DrawRecords(window, background, font))
+                    Table.clean();
+
             if (menuNum == 3) {
                 isMenu = false;
             }
             if (menuNum == 4) {
-                window.draw(background);
-                window.draw(about);
-                window.display();
-                while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-                    ;
+                DrawAbout(window, background, font);
             }
         }
 

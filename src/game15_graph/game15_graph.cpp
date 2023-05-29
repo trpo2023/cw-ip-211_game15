@@ -11,18 +11,27 @@
 
 const char* YOUWIN = "../external/images/YouWinTexture.jpg"; // Путь к текстуре
 
-int BlockSize = 100; // Размер блока
-int WIGHT = 1800;    // Ширина окна
-int HEIGHT = 900;    // Высота окна
-int NewGame_Size = 50, NewGame_X = 100, NewGame_Y = 200; // "Новая Игра"
-int TableRecords_Size = 50, TableRecords_X = 100,
-    TableRecords_Y = 300; //  "Таблица Рекордов"
-int Exit_Size = 50, Exit_X = 100, Exit_Y = 400;    // "Выход"
-int About_Size = 50, About_X = 100, About_Y = 800; // "О Создателях"
-int Easy_Size = 50, Easy_X = 100, Easy_Y = 200;    // "Легкий"
-int Normal_Size = 50, Normal_X = 100, Normal_Y = 200; // "Средний"
-int Hard_Size = 50, Hard_X = 100, Hard_Y = 200;       // "Тяжелый"
-int Field_Size = 50, Field_X = 100, Field_Y = 200; // Поле для Ввода
+int WIGHT = 1800; // Ширина окна
+int HEIGHT = 900; // Высота окна
+
+void DrawAbout(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
+{
+    while ((window.isOpen())) {
+        sf::Event event;
+        while ((window.pollEvent(event))) {
+            if ((event.type == sf::Event::Closed))
+                window.close();
+            else if ((event.key.code == sf::Keyboard::Escape)) {
+                return;
+            }
+        }
+        sf::Text about("The Game was created \n by two stogles", font, 50);
+        about.setPosition(500, 400);
+        window.draw(background);
+        window.draw(about);
+        window.display();
+    }
+}
 
 void Draw(
         Grid grid,
@@ -32,37 +41,20 @@ void Draw(
         int vx,
         int vy)
 {
-    sf::RectangleShape** blocks = new sf::RectangleShape*[grid.Size];
-    sf::Text** texts = new sf::Text*[grid.Size];
-    for (int i = 0; i < grid.Size; ++i) {
-        blocks[i] = new sf::RectangleShape[grid.Size];
-        texts[i] = new sf::Text[grid.Size];
-        for (int j = 0; j < grid.Size; ++j) {
-            blocks[i][j].setSize(sf::Vector2f(blocksize, blocksize));
-            blocks[i][j].setOutlineThickness(1.f);
-            blocks[i][j].setOutlineColor(sf::Color::Black);
-            if (grid.Current_Array[i][j] == 0)
-                blocks[i][j].setFillColor(sf::Color::Black);
-            else
-                blocks[i][j].setFillColor(sf::Color::White);
-            sf::Vector2f pos(i * blocksize, j * blocksize);
-            texts[i][j].setFont(font);
-            texts[i][j].setString(std::to_string(grid.Current_Array[i][j]));
-            texts[i][j].setCharacterSize(70);
-            texts[i][j].setPosition(
-                    (float)(vx + pos.x + 2.f), (float)(vy + pos.y + 2.f));
-            texts[i][j].setFillColor(sf::Color::Black);
-        }
+    for (int i = 0; i < grid.Size * grid.Size; ++i) {
+        sf::Sprite block;
+        sf::Texture image;
+        std::string path = "../external/images/" + std::to_string(grid.Size)
+                + "x" + std::to_string(grid.Size) + "/"
+                + std::to_string(grid.Current_Array[i]) + ".png";
+        image.loadFromFile(path);
+        block.setTexture(image);
+        block.setPosition(
+                vx + (i % grid.Size) * blocksize,
+                vy + (i / grid.Size) * blocksize);
+        window.draw(block);
     }
-    for (int i = 0; i < grid.Size; ++i)
-        for (int j = 0; j < grid.Size; ++j) {
-            sf::Vector2f pos(vx + i * blocksize, vy + j * blocksize);
-            blocks[i][j].setPosition(pos);
-            window.draw(blocks[i][j]);
-            window.draw(texts[i][j]);
-        }
 }
-// Просит игрока ввести имя и возвращает его
 
 // Инициализация Пятнашек
 int Game(
@@ -79,10 +71,6 @@ int Game(
     Grid grid(size);
     grid.Random();
     while (window.isOpen()) {
-        if (grid.CheckWin()) {
-            win = true;
-            break;
-        }
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
@@ -103,6 +91,13 @@ int Game(
             Draw(grid, window, font, blocksize, vx, vy);
             window.display();
         }
+        if (grid.CheckWin()) {
+            win = true;
+            window.draw(background);
+            Draw(grid, window, font, blocksize, vx, vy);
+            window.display();
+            break;
+        }
     }
     return grid.Count;
 }
@@ -111,12 +106,13 @@ void YouWin(sf::RenderWindow& window)
 {
     sf::Texture YouWinTexture;
     YouWinTexture.loadFromFile(YOUWIN);
-    sf::Sprite YouWin(YouWinTexture);
-    YouWin.setScale(3.0f, 3.0f);
-    YouWin.setPosition(WIGHT / 2 - 300, HEIGHT / 2 - 300);
+    sf::Sprite YouWin;
+    YouWin.setTexture(YouWinTexture);
+    YouWin.setScale(2.0f, 2.0f);
+    YouWin.setPosition(WIGHT / 2 - 200, 0);
     window.draw(YouWin);
     window.display();
-    Sleep(1500);
+    Sleep(1000);
 }
 
 // Вывод Таблицу рекордов из файла
@@ -136,12 +132,7 @@ void PrintRecord(sf::RenderWindow& window, sf::Font font)
     sf::Text text(content, font, 40);
     text.setPosition(10, 100);
 
-    if (isRec) {
-        window.draw(text);
-        window.display();
-        while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-            ;
-    }
+    window.draw(text);
 }
 
 // Возвращает значение сложности полученное от игрока
@@ -195,18 +186,37 @@ int Difficulty(sf::RenderWindow& window, sf::Font font, sf::Sprite background)
     }
 }
 // Отрисовывает таблицу рекордов в главном окне
-void DrawRecords(
-        sf::RenderWindow& window,
-        sf::Sprite background,
-        sf::Font font,
-        sf::Text about)
+int DrawRecords(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
 {
-    window.draw(background);
-    PrintRecord(window, font);
-    window.draw(about);
-    window.display();
-    while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-        ;
+    sf::Text Clear("Clear", font, 40);
+    Clear.setFillColor(sf::Color::White);
+    Clear.setPosition(0, 700);
+    while (window.isOpen()) {
+        sf::Event event;
+        window.draw(background);
+        PrintRecord(window, font);
+        window.draw(Clear);
+        window.display();
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            } else if (event.key.code == sf::Keyboard::Escape)
+                return 0;
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                // Проверяем на какую кнопку нажал пользователь
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2f mousePosition
+                            = window.mapPixelToCoords(sf::Vector2i(
+                                    event.mouseButton.x, event.mouseButton.y));
+                    if (Clear.getGlobalBounds().contains(mousePosition)) {
+                        ClearFile();
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
+    return 0;
 }
 std::string
 EnterTheName(sf::RenderWindow& window, sf::Sprite background, sf::Font font)
