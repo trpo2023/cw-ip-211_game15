@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../src/game15_logic/game15_logic.h"
-#include "../thirdparty/ctest.h"
+#include <ctest.h>
+#include <game15_logic.h>
 
 CTEST(GridTestSuite, DefaultConstructorTest)
 {

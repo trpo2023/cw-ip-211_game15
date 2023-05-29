@@ -1,91 +1,60 @@
-SFMLFALGS = -lsfml-main -lsfml-graphics -lsfml-window -lsfml-system
-RM = rm -r
-CC = g++
-
-APP_NAME = game15
-LOGIC_NAME = game15_logic
-GRAPH_NAME = game15_graph
+APP_NAME = main
+LIB_NAME = lib
 TEST_NAME = test
 
+TESTFLAGS = -I thirdparty
+SFML_FLAGS = -lsfml-graphics -lsfml-system -lsfml-window
+CFLAGS = -I src/lib
+DEPSFLAGS = -MMD
+CC = g++
+
 BIN_DIR = bin
-SRC_DIR = src
-SFML_DIR = external/SFML
 OBJ_DIR = obj
+SRC_DIR = src
 TEST_DIR = test
 
 APP_PATH = $(BIN_DIR)/$(APP_NAME)
+LIB_PATH = $(OBJ_DIR)/$(SRC_DIR)/$(LIB_NAME)/$(LIB_NAME).a
 TEST_PATH = $(BIN_DIR)/$(TEST_NAME)
 
-CPP_EXT = cpp
+APP_SOURCES = $(wildcard $(SRC_DIR)/$(APP_NAME)/*.cpp)
+APP_OBJECTS = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(APP_SOURCES))
 
-APP_SOURCES = $(SRC_DIR)/$(APP_NAME)/$(APP_NAME).$(CPP_EXT)
-APP_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(APP_NAME)/$(APP_NAME).o
+LIB_SOURCES = $(wildcard $(SRC_DIR)/$(LIB_NAME)/*.cpp)
+LIB_OBJECTS = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(LIB_SOURCES))
 
-LOGIC_SOURCES = $(SRC_DIR)/$(LOGIC_NAME)/$(LOGIC_NAME).$(CPP_EXT)
-LOGIC_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(LOGIC_NAME)/$(LOGIC_NAME).o
-LOGIC_OBJECTS_TEST = $(OBJ_DIR)/$(TEST_DIR)/$(LOGIC_NAME).o
+TEST_SOURCES = $(wildcard $(TEST_DIR)/*.cpp)
+TEST_OBJECTS = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(TEST_SOURCES))
 
-LIB_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(LOGIC_NAME)/lib_game15.a
-LOGIC_STATIC_TEST = $(OBJ_DIR)/$(TEST_DIR)/lib_logic.a
-GRAPH_STATIC = $(OBJ_DIR)/$(SRC_DIR)/$(GRAPH_NAME)/lib_graph.a
+DEPS = $(APP_OBJECTS:.o=.d) $(LIB_OBJECTS:.o=.d)
 
-GRAPH_SOURCES = $(SRC_DIR)/$(GRAPH_NAME)/$(GRAPH_NAME).$(CPP_EXT)
-GRAPH_OBJECTS = $(OBJ_DIR)/$(SRC_DIR)/$(GRAPH_NAME)/$(GRAPH_NAME).o
+all: $(APP_PATH)
 
-TEST_SOURCE = $(TEST_DIR)/$(TEST_NAME).$(CPP_EXT)
-TEST_OBJECTS = $(OBJ_DIR)/$(TEST_DIR)/$(TEST_NAME).o
+-include $(DEPS)
 
-#for testing test/main.cpp
-MAIN_SOURCE = $(TEST_DIR)/main.$(CPP_EXT)
-MAIN_OBJECTS = $(OBJ_DIR)/$(TEST_DIR)/main.o
+$(APP_PATH): $(APP_OBJECTS) $(LIB_PATH)
+	$(CC) $(CFLAGS) -o $@ $^ $(SFML_FLAGS)
 
-
-
-all:$(APP_PATH)
-
-$(APP_PATH): $(APP_OBJECTS) $(LIB_OBJECTS)
-	$(CC) -I $(SFML_DIR)/include -o $@ $^ -L $(SFML_DIR)/lib $(SFMLFALGS) 
-
-$(LIB_OBJECTS): $(LOGIC_OBJECTS) $(GRAPH_OBJECTS)
+$(LIB_PATH): $(LIB_OBJECTS)
 	ar rcs $@ $^
 
-$(GRAPH_OBJECTS): $(GRAPH_SOURCES)
-	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
+$(OBJ_DIR)/%.o: %.cpp
+	$(CC) $(CFLAGS) $(DEPSFLAGS) -c -o $@ $< 
 
-$(LOGIC_OBJECTS): $(LOGIC_SOURCES)
-	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
+test: $(LIB_PATH) $(TEST_PATH)
+	$(TEST_PATH)
 
-$(APP_OBJECTS): $(APP_SOURCES)
-	$(CC) -I $(SFML_DIR)/include -c -o $@ $^
+$(TEST_PATH): $(TEST_OBJECTS) $(LIB_PATH)
+	$(CC) $(TESTFLAGS) $(CFLAGS) -o $@ $^ $(SFML_FLAGS)
 
+$(OBJ_DIR)/test/main.o: test/main.cpp
+	$(CC) $(TESTFLAGS) $(CFLAGS) $(DEPSFLAGS) -c -o $@ $<
 
+$(OBJ_DIR)/test/test.o: test/test.cpp
+	$(CC) $(TESTFLAGS) $(CFLAGS) $(DEPSFLAGS) -c -o $@ $<
 
-test: $(TEST_PATH)
-	./$<
-
-$(TEST_PATH): $(TEST_OBJECTS) $(MAIN_OBJECTS) $(LOGIC_STATIC_TEST)
-	$(CC) $^ -o $@
-
-$(TEST_OBJECTS): $(TEST_SOURCE)
-	$(CC) -c -o $@ $^
-
-$(MAIN_OBJECTS): $(MAIN_SOURCE)
-	$(CC) -c -o $@ $^
-
-$(LOGIC_OBJECTS_TEST): $(LOGIC_SOURCES)
-	$(CC) -c -o $@ $^
-
-$(LOGIC_STATIC_TEST): $(LOGIC_OBJECTS_TEST)
-	ar rcs $@ $^
-
-.PHONY: clean
-
-.IGNORE: clean
+run: $(APP_PATH)
+	./bin/main
 
 clean:
-	$(RM) $(BIN_DIR)/*.exe
-	$(RM) $(OBJ_DIR)/*/*/*.o
-	$(RM) $(OBJ_DIR)/*/*/*.a
-	$(RM) $(OBJ_DIR)/*/*.o
-	$(RM) $(OBJ_DIR)/*/*.a
-
+	$(RM) $(APP_PATH) $(TEST_PATH) $(OBJ_DIR)/*/*/*.[aod] $(OBJ_DIR)/test/*.[aod]
